@@ -31,4 +31,6 @@ python -m tkinter
 <br>
 [option 2](https://www.amazon.com/NetumScan-Handheld-Supports-Warehouse-Supermarket/dp/B098NKCR1G/ref=asc_df_B098NKCR1G/?tag=hyprod-20&linkCode=df0&hvadid=693270340014&hvpos=&hvnetw=g&hvrand=5975177541459955724&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9196738&hvtargid=pla-1538769764085&psc=1&mcid=b85a20ca72f63172959b8faba1b7f57c) <br><br>
 
-**Printer**
+**Printer** <br>
+[option 1](https://www.brother-usa.com/products/ql600?srsltid=AfmBOoq3sQo-xM97KeIMJtVlzJKFXeYEX1-vYDrME6k1hs0N-yIf1StKYFM#accessories)
+
