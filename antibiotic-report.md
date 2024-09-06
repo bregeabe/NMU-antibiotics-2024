@@ -19,9 +19,19 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
 
 ## Entities
 - Patient
-    - Name, Gender, MRN, DOB, Date, etc.
-- Biology information about microbes 
-    - Specimen type, Direct gram strain, etc.
+    - name (string)
+    - dateOfBirth (date)
+    - medicalRecordNumber (integer)
+    - gender (enum)
+    - collectionDate (date)
+    - source (string)
+    - orderingProvider (string)
+    - diagnosis (string)
+    - isReceivingTherapy (boolean)
+    - testOrdered (boolean)
+- Staff
+    - timeReceived
+    - specimenAcceptable (boolean)
 
 ## Entity relation diagram
 ![diagram](./assets/antibiotic-report-diagram.png)
