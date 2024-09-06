@@ -2,7 +2,7 @@
 
 ### Barcode
 Here is an [article](https://www.geeksforgeeks.org/how-to-generate-barcode-in-python/) on barcodes
-```
+```python
 # import EAN13 from barcode module 
 from barcode import EAN13 
   
@@ -22,7 +22,7 @@ That code creates a barcode in svg format, other formats like png and jpg can be
 Getting started with [tkinter](https://docs.python.org/3/library/tkinter.html)
 
 Example window
-```
+```python
 python -m tkinter
 ```
 ### Hardware
