@@ -30,9 +30,24 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
     - isReceivingTherapy (boolean)
     - testOrdered (boolean)
 - Staff
-    - timeReceived
+    - timeReceived (date)
     - specimenAcceptable (boolean)
-
+- Specimen
+    - type (enum)
+    - directGrainStrain (enum)
+    - cultureReadout (struct)
+        - date (date)
+        - time (time)
+        - criticalResults
+    - colonyDescription (string)
+    - biochemicalReactions (string)
+    - simulatedBiochems (struct)
+        - testName (string)
+        - describeInoculation
+        - temperature (integer)
+        - duration (string)
+        - atmosphericConditions
+        
 ## Entity relation diagram
 ![diagram](./assets/antibiotic-report-diagram.png)
 
