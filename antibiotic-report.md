@@ -29,9 +29,7 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
     - diagnosis (string)
     - isReceivingTherapy (boolean)
     - testOrdered (boolean)
-- Staff
-    - timeReceived (date)
-    - specimenAcceptable (boolean)
+- Staff (user)
 - Specimen
     - type (enum)
     - directGrainStrain (enum)
