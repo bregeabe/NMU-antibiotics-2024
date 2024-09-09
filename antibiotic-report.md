@@ -53,11 +53,6 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
 
 ## Queries
 
-- Patient information, patientId
-```SQL
-SELECT * FROM Patients WHERE PatientId = ?
-```
-- Specimen information, specimenId
-```SQL
-SELECT * FROM Specimens WHERE SpecimenId = ?
-```
+- Patient information, patientId, retrieves information about the patient.
+
+- Specimen information, specimenId, retrieves information about the specimen.
