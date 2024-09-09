@@ -51,3 +51,13 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
 ## Entity relation diagram
 ![diagram](./assets/antibiotic-report-diagram.png)
 
+## Queries
+
+- Patient information, patientId
+```SQL
+SELECT * FROM Patients WHERE PatientId = ?
+```
+- Specimen information, specimenId
+```SQL
+SELECT * FROM Specimens WHERE SpecimenId = ?
+```
