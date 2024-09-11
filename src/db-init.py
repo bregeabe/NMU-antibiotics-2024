@@ -17,7 +17,6 @@ db.execute('''
 CREATE TABLE IF NOT EXISTS Specimens (
     specimenId INT PRIMARY KEY,
     name TEXT NOT NULL,
-    age INT NOT NULL
 );
 ''')
 
