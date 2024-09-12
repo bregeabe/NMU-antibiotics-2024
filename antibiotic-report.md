@@ -57,6 +57,12 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
 
 # Events
 
+- add/edit patient - 
+
+- add/edit specimen - 
+
+- add/edit patientSpecimen - 
+
 - getPatientInformation - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. Parameters: patientId
 
 - getSpecimenInformation - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. Anything that only pertains to the specimen. Don't mistake specimen information for patient specimen information, any specimen information that is not the same for every patient it interacts with is patientSpecimen information, as the data is reliant on both. Parameters: specimenId
