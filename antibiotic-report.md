@@ -54,3 +54,17 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
 - Patient information, patientId, retrieves information about the patient.
 
 - Specimen information, specimenId, retrieves information about the specimen.
+
+# Events
+
+- add/edit patient - 
+
+- add/edit specimen - 
+
+- add/edit patientSpecimen - 
+
+- getPatientInformation - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. Parameters: patientId
+
+- getSpecimenInformation - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. Anything that only pertains to the specimen. Don't mistake specimen information for patient specimen information, any specimen information that is not the same for every patient it interacts with is patientSpecimen information, as the data is reliant on both. Parameters: specimenId
+
+- getPatientSpecimenInformation - this will retrieve information about the patients specimen test that is getting the antibiotic report run. For example, culture results will be a part of patient-specimen information as it is dependent on both the patient, and the specimen. Parameters: patientId, specimenId
