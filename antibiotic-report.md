@@ -18,32 +18,36 @@ We want to be able to store the data in these cards, and have the data be loaded
 We can achieve this by the relation in the database, upon scanning, it calls a get request to our database based upon the ID scanned. Similarly, upon editing date, it will post this data to the database, in which it can be retrieved later (GET and POST are just naming conventions, this will not be a network-based application. All local.)
 
 ## Entities
-- Patient
-    - name (string)
-    - dateOfBirth (date)
-    - medicalRecordNumber (integer)
-    - gender (enum)
-    - collectionDate (date)
-    - source (string)
-    - orderingProvider (string)
-    - diagnosis (string)
-    - isReceivingTherapy (boolean)
-    - testOrdered (boolean)
-- Staff (user)
-- Specimen
-    - type (enum)
-    - directGrainStrain (enum)
-    - cultureReadout (struct)
-        - date (date)
-        - time (time)
-        - criticalResults
-    - colonyDescription (string)
-    - biochemicalReactions (string)
-    - simulatedBiochems (struct)
-        - testName (string)
-        - describeInoculation
+ - **Patient**
+    - *name* (string) - Last name, First name
+    - *dateOfBirth* (date) - Date of birth in MM/DD/YYYY format.
+    - *medicalRecordNumber/ PatientID* (integer) - 6 digit patient medical record number 
+    - *gender* (boolean) - M of F 
+    - *collectionDate* (date) - Date collected in MM/DD/YYYY
+    - *collectionTime* - Collection time in military time
+    - *source* (string) - Source of where the specimen was recieved. 
+        - Examples include: Oral abcess swab, Urine midstream clean catch.
+    - *orderingProvider* (string) - Who the ordering provider is.
+        - Examples include: Dr. Renaldi, Dr. Mann, Dr. Thunell.
+    - *diagnosis* (string) - The identification of a disease or condition. 
+        - Examples inculude: Sore in mouth, Annual check up.
+    - *isReceivingTherapy* (boolean) - is the patient recieving antimicrobial therapy?
+    - *testOrdered* (boolean) - What kind of test was ordered for the patient?
+- **Staff** (user)
+- **Specimen**
+    - *type* (enum) - What type is the specimen - CSF, Urine, Sputum etc.
+    - *directGramStain* (enum) - Test that checks to see if you have a bacterial infection.
+    - *cultureReadout* (struct) - read out cultures each day until they can be finalized. 
+        - date (date) - MM/DD/YYYY
+        - time (time) - Military time
+        - criticalResults - Document if a result was "critical" and called directly to the provider.
+    - *colonyDescription* (string) - physically describe the colonies.
+    - *biochemicalReactions* (string) - list all biochemical testing performed and what the results were.
+    - *simulatedBiochems* (struct) - These are simulated tests to demonstrate ideas to the tests they cannot run.
+        - testName (string) 
+        - describeInoculation 
         - temperature (integer)
-        - duration (string)
+        - duration (string) 
         - atmosphericConditions
         
 ## Entity relation diagram
