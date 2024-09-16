@@ -10,11 +10,11 @@ rows = db.fetchall()
 print(rows)
 for row in rows:
     print(row)
-
+    
 
 root = Tk()
 root.title("Antibiotic Report")
-root.minsize(900, 750)  # width, height
+root.minsize(1200, 700)  # width, height
 root.maxsize(1000, 800)
 root.geometry("300x300+50+50")  # width x height + x + y
 root.mainloop()
