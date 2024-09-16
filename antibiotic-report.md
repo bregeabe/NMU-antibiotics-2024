@@ -33,17 +33,17 @@ This results in a professional way for students to document patient and specimen
     - *diagnosis* (string) - The identification of a disease or condition. 
         - Examples inculude: Sore in mouth, Annual check up.
     - *isReceivingTherapy* (boolean) - is the patient recieving antimicrobial therapy?
-    - *testOrdered* (boolean) - What kind of test was ordered for the patient?
+    - *testOrdered* (string) - What kind of test was ordered for the patient?
 - **Specimen**
-    - *type* (enum) - What type is the specimen - CSF, Urine, Sputum etc.
-    - *directGramStain* (enum) - Test that checks to see if you have a bacterial infection.
+    - *type* (enum) - What type is the specimen (CSF, Urine, Sputum etc.)
+    - *directGramStain* (enum) - Test that checks to see if you have a bacterial infection / help identify it. (WBCs, EPIs, GPC, ...)  
     - *cultureReadout* (struct) - read out cultures each day until they can be finalized. 
         - date (date) - MM/DD/YYYY
         - time (time) - Military time
         - criticalResults - Document if a result was "critical" and called directly to the provider.
     - *colonyDescription* (string) - physically describe the colonies.
     - *biochemicalReactions* (string) - list all biochemical testing performed and what the results were.
-    - *simulatedBiochems* (struct) - These are simulated tests to demonstrate ideas to the tests they cannot run.
+    - *simulatedBiochems* (struct) - These are simulated tests to demonstrate ideas about tests they cannot run.
         - testName (string) 
         - describeInoculation 
         - temperature (integer)
@@ -55,9 +55,13 @@ This results in a professional way for students to document patient and specimen
 
 ## Queries
 
-- **Q1** View Patient Information - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. Parameters: patientId
+- **Q1** View Patient Information, Parameters: patientId OR name and dateOfBirth - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. 
 
-- **Q2** View Specimen Information - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. Parameters: specimenId
+- **Q2** View Specimen Information (can be barcode scan), Parameters: specimenId - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. 
+
+- **Q3** View all Patients - Show all patients in the system.
+
+- **Q4** View all Specimen tied to Patient - Show all specimen tied to the patient.
 
 ## Events
 
@@ -76,8 +80,14 @@ This results in a professional way for students to document patient and specimen
 **R3** - The only users permitted are staff and students in the lab. An initial log in screen will appear and prompt for email and password. The email will be the users NMU email and password is users choice, please use fake passwords. 
 - Note: This is not real authentication and the user is not tied to an account.
 
+**R4** - To clear all patients and specimen, the professor or staff can enter a code to clear all entries. This would be useful at the start of new semesters.
+
 ## Security
 
-**R4** - Minimal security measures will be taken with patients information as that information will be made up.
+**R5** - Minimal security measures will be taken with patients information as that information will be made up.
 
-**R5** - Passwords for logging in will not be saved and only present to simulate logging into a hospitals system.
+**R6** - Passwords for logging in will not be saved and only present to simulate logging into a hospitals system.
+
+## Future Changes
+
+- Every action may have a staff assigned to it. For example, if a new patient was added, it would show who created the form for the patient. 
