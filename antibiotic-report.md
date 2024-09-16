@@ -3,21 +3,22 @@
 ## Overview
 The clinical sciences department creates antibiotic reports based on micro-organisms to find MIC's for patient treatment. Right now, they do this process by pen and paper. While it gets the job done, it has proven to be ineffective and an inaccurate representation of the industry. 
 
-Our software solution would function from a birdseye view is as quite simple. We would need to have a form to enter patient information, a "Specimen Requisition Form". This information would then be able to be represented as a barcode that could be printed out, and scanned to add more information, and view current information. 
+There are two main issues at hand.
+1. In a hospital, you would fill out the forms digitaly rather than on pen and paper.
+2. Finding the history of these forms is inefficent and, once again, an inaccurate representation of industry.
 
 ## System expectations
 
-From a software standpoint, we can approach this intuitively and provide a deliverable without too much overhead.
+A birdseye solution is as follows:
 
-1. Make the "Specimen Requisition", and "Work Card" forms
-2. Have an sql database holding each forms information, linking by an ID. 
-3. Allow our data to be populated by scanning the barcode
+1. Have the Specimen Requisition and Work Card forms digitalized and placed on the computer.
+2. The information present in the forms would be represented as a barcode that can be printed out. 
+3. The barcode can be scanned to add more information or view current information on the computer.
 
-We want to be able to store the data in these cards, and have the data be loaded and populated into our program upon barcode scan. 
-
-We can achieve this by the relation in the database, upon scanning, it calls a get request to our database based upon the ID scanned. Similarly, upon editing date, it will post this data to the database, in which it can be retrieved later (GET and POST are just naming conventions, this will not be a network-based application. All local.)
+This results in a professional way for students to document patient and specimen info. Additionally, the students gain real world application as if they were working in the hospital itself.
 
 ## Entities
+- **Staff** (user) - Student or faculty. 
  - **Patient**
     - *name* (string) - Last name, First name
     - *dateOfBirth* (date) - Date of birth in MM/DD/YYYY format.
@@ -33,7 +34,6 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
         - Examples inculude: Sore in mouth, Annual check up.
     - *isReceivingTherapy* (boolean) - is the patient recieving antimicrobial therapy?
     - *testOrdered* (boolean) - What kind of test was ordered for the patient?
-- **Staff** (user)
 - **Specimen**
     - *type* (enum) - What type is the specimen - CSF, Urine, Sputum etc.
     - *directGramStain* (enum) - Test that checks to see if you have a bacterial infection.
@@ -55,20 +55,29 @@ We can achieve this by the relation in the database, upon scanning, it calls a g
 
 ## Queries
 
-- Patient information, patientId, retrieves information about the patient.
+- **Q1** View Patient Information - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. Parameters: patientId
 
-- Specimen information, specimenId, retrieves information about the specimen.
+- **Q2** View Specimen Information - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. Parameters: specimenId
 
-# Events
+## Events
 
-- add/edit patient - 
+- Add/Edit Patient Information - Shows the forum to either add or edit patient information.
 
-- add/edit specimen - 
+- Add/Edit Specimen Information - Shows the forum to either add or edit specimen information.
 
-- add/edit patientSpecimen - 
+## Platform
 
-- getPatientInformation - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. Parameters: patientId
+**R1** - The software will be installed on the computer inside of the clincal science lab room. 
 
-- getSpecimenInformation - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. Anything that only pertains to the specimen. Don't mistake specimen information for patient specimen information, any specimen information that is not the same for every patient it interacts with is patientSpecimen information, as the data is reliant on both. Parameters: specimenId
+**R2** - The software will be compatable with: Windows 7, Windows 8, Windows 10, Windows 11.
 
-- getPatientSpecimenInformation - this will retrieve information about the patients specimen test that is getting the antibiotic report run. For example, culture results will be a part of patient-specimen information as it is dependent on both the patient, and the specimen. Parameters: patientId, specimenId
+## User permissions
+
+**R3** - The only users permitted are staff and students in the lab. An initial log in screen will appear and prompt for email and password. The email will be the users NMU email and password is users choice, please use fake passwords. 
+- Note: This is not real authentication and the user is not tied to an account.
+
+## Security
+
+**R4** - Minimal security measures will be taken with patients information as that information will be made up.
+
+**R5** - Passwords for logging in will not be saved and only present to simulate logging into a hospitals system.
