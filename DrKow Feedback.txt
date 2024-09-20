@@ -1,0 +1,21 @@
+Antibiotics - milestone 1 feedback
+----------------------------------
+
+Should students be allowed to change patient names or other student's forms?  Probably not.  The former could be handled by the auth code you mentioned, but the later would seem to suggest that some permissions should be tied to users (maybe: specimen data can only be modified by the person who first established that specimen).  It seems like it would be the professor who initially establishes the existence of patients in the system, before the lab work begins.  These security issues need to be planned for.  Perhaps an audit trail (which could take the form of a log file) should be provided as well.
+
+A bunch of patient attributes still need to be moved to specimen (collectionDate, collectionTime, orderingProvider, diagnosis, isReceivingTherapy, testOrdered) and one of them is a duplicate (source).  I believe isReceivingTherapy should be interpreted as "is the patient recieving antimicrobial therapy at the time the specimen was collected?"
+
+directGramStain(enum) - are WBC, EPI, and GPC the possible values?  These should be described.
+
+cultureReadout - I believe this is a list of structs, rather than just a struct.
+
+simulatedBiochems - some more description here would be useful to the reader.  For example: "These are simulated tests to demonstrate ideas about tests that the students cannot run. Students write the results in to demonstrate their understanding of these tests."	
+
+Should we have the ability to delete a specimen?
+
+Please link the second diagram in the document.
+
+We should definitely have a formal requirement for being able to print labels.
+
+	Grade: A-.  Minor fixes needed.
+	
