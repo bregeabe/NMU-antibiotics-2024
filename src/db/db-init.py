@@ -7,7 +7,6 @@ db.execute('''
 CREATE TABLE IF NOT EXISTS Patients (
     patientId INT PRIMARY KEY,
     patientIdNumber INT,
-    medicalRecordNumber INT,
     name TEXT NOT NULL,
     dateOfBirth DATE,
     gender TEXT NOT NULL
@@ -18,6 +17,7 @@ db.execute('''
 CREATE TABLE IF NOT EXISTS Specimens (
     specimenId INT PRIMARY KEY,
     patientId INT,
+    medicalRecordNumber INT,
     name TEXT NOT NULL,
     collectionDate DATE,
     collectionTime TIME,
