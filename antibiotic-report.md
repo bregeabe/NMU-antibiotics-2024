@@ -24,70 +24,94 @@ This results in a professional way for students to document patient and specimen
     - *dateOfBirth* (date) - Date of birth in MM/DD/YYYY format.
     - *medicalRecordNumber/ PatientID* (integer) - 6 digit patient medical record number 
     - *gender* (boolean) - M of F 
+    - *diagnosis* (string) - Why did the patient come in / what is the condition. 
+        - Examples inculude: Sore in mouth, Annual check up.
+    - *isReceivingTherapy* (boolean) - is the patient recieving antimicrobial therapy at the time of collection?
+
+- **Specimen**
+    - *source* (enum) - What type is the specimen (CSF, Urine, Sputum etc.)
+    - *orderingProvider* (string) - Who the ordering provider is.
+        - Examples include: Dr. Renaldi, Dr. Mann, Dr. Thunell, etc.
     - *collectionDate* (date) - Date collected in MM/DD/YYYY
     - *collectionTime* - Collection time in military time
-    - *source* (string) - Source of where the specimen was recieved. 
-        - Examples include: Oral abcess swab, Urine midstream clean catch.
-    - *orderingProvider* (string) - Who the ordering provider is.
-        - Examples include: Dr. Renaldi, Dr. Mann, Dr. Thunell.
-    - *diagnosis* (string) - The identification of a disease or condition. 
-        - Examples inculude: Sore in mouth, Annual check up.
-    - *isReceivingTherapy* (boolean) - is the patient recieving antimicrobial therapy?
     - *testOrdered* (string) - What kind of test was ordered for the patient?
-- **Specimen**
-    - *type* (enum) - What type is the specimen (CSF, Urine, Sputum etc.)
-    - *directGramStain* (enum) - Test that checks to see if you have a bacterial infection / help identify it. (WBCs, EPIs, GPC, ...)  
-    - *cultureReadout* (struct) - read out cultures each day until they can be finalized. 
+    - *directGramStain* (list of ints) - Test that checks to see if you have a bacterial infection / help identify it. How many x were seen, where x is either WBCs, EPIs, GPC, GPB, GNC, GNB, or Other. 
+    - *cultureReadout* (list of structs) - read out cultures each day until they can be finalized. 
         - date (date) - MM/DD/YYYY
         - time (time) - Military time
         - criticalResults - Document if a result was "critical" and called directly to the provider.
     - *colonyDescription* (string) - physically describe the colonies.
     - *biochemicalReactions* (string) - list all biochemical testing performed and what the results were.
-    - *simulatedBiochems* (struct) - These are simulated tests to demonstrate ideas about tests they cannot run.
+    - *simulatedBiochems* (struct) - These are simulated tests to demonstrate ideas about tests that the students cannot run. Students write the results in to demonstrate their understanding of these tests.
         - testName (string) 
         - describeInoculation 
         - temperature (integer)
         - duration (string) 
         - atmosphericConditions
         
-## Entity relation diagram
+## Entity relation diagrams
 ![diagram](./assets/antibiotic-report-diagram.png)
+
+![diagram](./assets/EntityRelation.png)
 
 ## Queries
 
-- **Q1** View Patient Information, Parameters: patientId OR name and dateOfBirth - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. 
+**Q1** - View Patient Information, Parameters: patientId OR name and dateOfBirth - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. 
 
-- **Q2** View Specimen Information (can be barcode scan), Parameters: specimenId - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. 
+**Q2** - View Specimen Information (can be barcode scan), Parameters: specimenId - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. 
 
-- **Q3** View all Patients - Show all patients in the system.
+**Q3** - View Specimen history, Parameters: specimenId - Shows a version history of specimen.
 
-- **Q4** View all Specimen tied to Patient - Show all specimen tied to the patient.
+**Q4** - View all Patients - Show all patients in the system.
+
+**Q5** - View all Specimen tied to Patient - Show all specimen tied to the patient.
 
 ## Events
 
-- Add/Edit Patient Information - Shows the forum to either add or edit patient information.
+- Add new Patient - Opens a blank form to create a patient in the system. Button provided to auto generate information.
 
-- Add/Edit Specimen Information - Shows the forum to either add or edit specimen information.
+- Edit Patient Information - Shows the form to edit patient information.
+
+- Add new Specimen - Opens a blank form to create a new Specimen tied to the patient.  
+
+- Edit Specimen Information - Shows the form to edit specimen information.
+
+- Remove Patient - Allows admin to delete the selected patient. Allows for multiple selections or selecting all.
+
+- Remove Specimen - Allows admin to delete the selected specimen. Allows for multiple selections or selecting all. 
 
 ## Platform
 
-**R1** - The software will be installed on the computer inside of the clincal science lab room. 
+**R1** - The software will be installed on the computer inside of the clincal science lab room The software will be compatable with: Windows 7, Windows 8, Windows 10, Windows 11.
 
-**R2** - The software will be compatable with: Windows 7, Windows 8, Windows 10, Windows 11.
+**R2** - The software will be compatable with a barcode printer and barcode scanner to produce the specimen barcodes.
 
 ## User permissions
 
-**R3** - The only users permitted are staff and students in the lab. An initial log in screen will appear and prompt for email and password. The email will be the users NMU email and password is users choice, please use fake passwords. 
-- Note: This is not real authentication and the user is not tied to an account.
+**R3** -  To create an account, an NMU email is required and you must create a password. An email will be sent to verify the user is a NMU staff or student. Username will be the first portion of the email. Example: studentA@nmu.edu Username: studentA 
 
-**R4** - To clear all patients and specimen, the professor or staff can enter a code to clear all entries. This would be useful at the start of new semesters.
+**R4** - Sign in can be either email and password or username and password. 
+
+Users can interact with the software differently depending on if they are faculty or students.
+
+| Event                    | Faculty | Student |
+| ------------------------ | :-----: | :-----: |
+| View Pateint Info        |    ✔    |    ✔    |
+| Add new Patient          |    ✔    |         |
+| Edit Patient Info        |    ✔    |         |
+| Remove Patients          |    ✔    |         |
+| View Specimen Info       |    ✔    |    ✔    |
+| Add new Specimen         |    ✔    |    ✔    |
+| Edit all Specimen        |    ✔    |         |
+| Edit user owned Specimen |    ✔    |    ✔    |
+| Remove Specimen          |    ✔    |         |
 
 ## Security
 
-**R5** - Minimal security measures will be taken with patients information as that information will be made up.
+**R5** - Login information is stored locally and will never leave the machine. 
 
-**R6** - Passwords for logging in will not be saved and only present to simulate logging into a hospitals system.
+## Current Questions
 
-## Future Changes
+- Do students ever edit patient info / create their own patients. Should they ever be able to?
 
-- Every action may have a staff assigned to it. For example, if a new patient was added, it would show who created the form for the patient. 
+- Should there be a button to clear all patient and specimen history? Should it be done automatically at the start of each semester?
