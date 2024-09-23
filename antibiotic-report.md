@@ -76,9 +76,9 @@ This results in a professional way for students to document patient and specimen
 
 - Edit Specimen Information - Shows the form to edit specimen information.
 
-- Remove Patient - Allows admin to delete the selected patient. Allows for multiple selections or selecting all.
+- Remove Patient - Allows admin to delete the selected patient. 
 
-- Remove Specimen - Allows admin to delete the selected specimen. Allows for multiple selections or selecting all. 
+- Remove Specimen - Allows admin to delete the selected specimen. 
 
 ## Platform
 
@@ -88,9 +88,11 @@ This results in a professional way for students to document patient and specimen
 
 ## User permissions
 
-**R3** -  To create an account, an NMU email is required and you must create a password. An email will be sent to verify the user is a NMU staff or student. Username will be the first portion of the email. Example: studentA@nmu.edu Username: studentA 
+**R3** -  Admin can input all students NMU IN for the semester to add students as new users.
 
-**R4** - Sign in can be either email and password or username and password. 
+**R4** - Sign in will be NMU IN.
+
+**R5** - Before each semester starts, all students, patients, and specimen will be cleared off the computer. Admin can generate new patients in the click of a button.
 
 Users can interact with the software differently depending on if they are faculty or students.
 
@@ -113,5 +115,3 @@ Users can interact with the software differently depending on if they are facult
 ## Current Questions
 
 - Do students ever edit patient info / create their own patients. Should they ever be able to?
-
-- Should there be a button to clear all patient and specimen history? Should it be done automatically at the start of each semester?
