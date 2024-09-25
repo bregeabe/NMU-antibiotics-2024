@@ -115,3 +115,5 @@ Users can interact with the software differently depending on if they are facult
 ## Current Questions
 
 - Do students ever edit patient info / create their own patients. Should they ever be able to?
+
+- Simple but less secure Student IN, or, create users by username and password.
