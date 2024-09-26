@@ -1,0 +1,7 @@
+Here is an example of what a roster looks like when copied from https://myweb.nmu.edu/faculty
+
+Note that sometimes a middle initial is missing, as in the case of Elizabeth Swan below.  In such a case, the "" are missing.
+
+Sparrow,"Jack C",jsparrow,99991234
+Turner,"William L",wturner,99991212
+Swan,Elizabeth,eswan,99990000
