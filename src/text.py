@@ -104,7 +104,8 @@ class App(customtkinter.CTk):
 
     def login(self):
         self.clear_frame()
-
+        self.login_container = customtkinter.CTkFrame(self, corner_radius=10)
+        self.login_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
     # Change scaling of all widget 80% to 120%
     def change_scaling_event(self, new_scaling: str):
