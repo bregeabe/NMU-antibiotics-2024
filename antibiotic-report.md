@@ -56,15 +56,14 @@ This results in a professional way for students to document patient and specimen
 
 ## Queries
 
-**Q1** - View Patient Information, Parameters: patientId OR name and dateOfBirth - this will retrieve information about the patient. For example, name, date of birth, gender, etc., any information about just the patient. 
+**Q1** - View Patients - Show all patients in the system for admins or patients assigned to students.
 
-**Q2** - View Specimen Information (can be barcode scan), Parameters: specimenId - this will retrieve information about the specimen. Things like the specimen name, specimen ID, etc. 
+**Q2** - View Specimen history | Parameters: SpecimenID - Shows all specimen linked to patient.
 
-**Q3** - View Specimen history, Parameters: specimenId - Shows a version history of specimen.
+**Q3** - View Specimen Requisition | Parameters: SpecimenID - Shows the Specimen Requisition form for specimen in progress at the lab.
 
-**Q4** - View all Patients - Show all patients in the system.
+**Q4** - View Work Card | Parameters: SpecimenID - Shows the work card for the specified specimen and patient.
 
-**Q5** - View all Specimen tied to Patient - Show all specimen tied to the patient.
 
 ## Events
 
@@ -88,32 +87,34 @@ This results in a professional way for students to document patient and specimen
 
 ## User permissions
 
-**R3** -  Admin can input all students NMU IN for the semester to add students as new users.
+**R3** -  Admin can view all Patient info.
 
-**R4** - Sign in will be NMU IN.
+**R4** - Sign in will be NMU ID Scan.
 
 **R5** - Before each semester starts, all students, patients, and specimen will be cleared off the computer. Admin can generate new patients in the click of a button.
 
 Users can interact with the software differently depending on if they are faculty or students.
 
-| Event                    | Faculty | Student |
+| Event                    |  Admin  | Student |
 | ------------------------ | :-----: | :-----: |
 | View Pateint Info        |    ✔    |    ✔    |
 | Add new Patient          |    ✔    |         |
 | Edit Patient Info        |    ✔    |         |
-| Remove Patients          |    ✔    |         |
+| View all Patients        |    ✔    |         |
 | View Specimen Info       |    ✔    |    ✔    |
 | Add new Specimen         |    ✔    |    ✔    |
 | Edit all Specimen        |    ✔    |         |
 | Edit user owned Specimen |    ✔    |    ✔    |
-| Remove Specimen          |    ✔    |         |
+| View all Specimen        |    ✔    |         |
 
 ## Security
 
-**R5** - Login information is stored locally and will never leave the machine. 
+**R5** - All non-admin users have a copy of patients and specimen.
 
 ## Current Questions
 
 - Do students ever edit patient info / create their own patients. Should they ever be able to?
 
 - Simple but less secure Student IN, or, create users by username and password.
+
+- Do students always work alone or are they occasionally in groups
