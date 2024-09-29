@@ -1,6 +1,33 @@
-Antibiotics - milestone 1 feedback
+Antibiotics - Milestone 2 feedback (prototype)
 ----------------------------------
+Here is some feedack for you.
 
+Add these to the prototype:
+	On the first time scanning the ID (both regular and admin), ask for first and last name.  For creating an admin, this would be best to move into the admin screen after logging in (so as not to advertise possible weakness and way of authentication).
+	There should be some backup link for logging in manually (if the scanner is not working).
+Under specimen history:
+	What is it that decides if an assignment is "Specimen Req" or "Complete"?
+	Does "back" cancel or accept?  Would a cancel button be a more natural choice?
+	What does "edit" do?
+Under work card screen:
+	Does "back" cancel or accept?  Would a cancel button be more faimiliar?
+	Does "Simulated Biochems" go to a different screen?  What would that screen look like?
+Requisition form:
+	I'm a little fuzzy on the process at the very start.  Is it something like this?  (check with the customer):
+		1) The prof fills out Requisition form (Same info copied for all students?  Some students?  Each individually?)
+			We may need to add multi-selection for students for that, unless it *always* populates the same thing for all students uniformly.
+		2) Someone takes the sample and links that up with the form and prints a label (How do we know which is paired up to then?  Is there a paper form that travels with it up to that point in time?  Is the label printed by the prof beforehand and attached to the sample before they begin?)
+	The form should also have an auto-fill option to link up with an existing patient, as you discussed earlier.
+We need controls to delete the patient and specimen (admin only).
+
+Summary: Good work with edits to the requirements document.  There are still two attributes to be moved from patient to specimen (diagnosis and isReceivingTherapy - since those can change on a per-specimen basis).  There are a few pieces that are missing with the prototype.  Otherwise, things look good.
+
+Grade: A-
+
+
+
+Antibiotics - Milestone 1 feedback (requirements document)
+----------------------------------
 Should students be allowed to change patient names or other student's forms?  Probably not.  The former could be handled by the auth code you mentioned, but the later would seem to suggest that some permissions should be tied to users (maybe: specimen data can only be modified by the person who first established that specimen).  It seems like it would be the professor who initially establishes the existence of patients in the system, before the lab work begins.  These security issues need to be planned for.  Perhaps an audit trail (which could take the form of a log file) should be provided as well.
 
 A bunch of patient attributes still need to be moved to specimen (collectionDate, collectionTime, orderingProvider, diagnosis, isReceivingTherapy, testOrdered) and one of them is a duplicate (source).  I believe isReceivingTherapy should be interpreted as "is the patient recieving antimicrobial therapy at the time the specimen was collected?"
