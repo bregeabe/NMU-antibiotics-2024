@@ -24,11 +24,11 @@ This results in a professional way for students to document patient and specimen
     - *dateOfBirth* (date) - Date of birth in MM/DD/YYYY format.
     - *medicalRecordNumber/ PatientID* (integer) - 6 digit patient medical record number 
     - *gender* (boolean) - M of F 
+
+- **Specimen**
     - *diagnosis* (string) - Why did the patient come in / what is the condition. 
         - Examples inculude: Sore in mouth, Annual check up.
     - *isReceivingTherapy* (boolean) - is the patient recieving antimicrobial therapy at the time of collection?
-
-- **Specimen**
     - *source* (enum) - What type is the specimen (CSF, Urine, Sputum etc.)
     - *orderingProvider* (string) - Who the ordering provider is.
         - Examples include: Dr. Renaldi, Dr. Mann, Dr. Thunell, etc.
