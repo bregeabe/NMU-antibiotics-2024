@@ -28,16 +28,16 @@ class App(customtkinter.CTk):
         self.login_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
         self.login_label = customtkinter.CTkLabel(self.login_container, text="Scan NMU ID", font=customtkinter.CTkFont(size=24, weight="bold"))
-        self.login_label.pack(pady=20)
+        self.login_label.pack(pady=50)
 
         self.nmuIN_entry = customtkinter.CTkEntry(self.login_container, placeholder_text="Click", show="*")
         self.nmuIN_entry.pack(pady=10)
 
         self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command=self.login)
-        self.login_button.pack(pady=20)
+        self.login_button.pack(pady=10)
 
         self.bt_Quit = customtkinter.CTkButton(self.login_container, text="Quit", fg_color= '#EA0000', hover_color = '#B20000', command=self.close_window)
-        self.bt_Quit.pack(pady=20)
+        self.bt_Quit.pack(pady=10)
 
     def create_main_frame(self):
         self.main_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
@@ -49,7 +49,7 @@ class App(customtkinter.CTk):
         self.left_side_panel.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=0)
 
         self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="NMU Antibiotic Report \n", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(40, 10))
 
         self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup)
         self.bt_dashboard.grid(row=1, column=0, padx=20, pady=10)
