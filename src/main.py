@@ -51,14 +51,14 @@ class App(customtkinter.CTk):
         self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="NMU Antibiotic Report \n", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(40, 10))
 
-        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup)
-        self.bt_dashboard.grid(row=1, column=0, padx=20, pady=10)
+        self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.scanning)
+        self.bt_categories.grid(row=1, column=0, padx=20, pady=10)
+
+        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="My Patients", command=self.lookup)
+        self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
 
         self.bt_statement = customtkinter.CTkButton(self.left_side_panel, text="Create Patient", command=self.create)
-        self.bt_statement.grid(row=2, column=0, padx=20, pady=10)
-
-        self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.scanning)
-        self.bt_categories.grid(row=3, column=0, padx=20, pady=10)
+        self.bt_statement.grid(row=3, column=0, padx=20, pady=10)
 
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Specimen Requisition", command=self.requisition)
         self.bt_categories.grid(row=4, column=0, padx=20, pady=10)
