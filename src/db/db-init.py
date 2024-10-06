@@ -55,12 +55,7 @@ CREATE TABLE IF NOT EXISTS CultureReadout (
     dayFourTime TIME,
     dayFiveTime TIME,
     dayFinalTime TIME,
-    WBC TEXT,
-    EPI TEXT,
-    GPC TEXT,
-    GPB TEXT,
-    GNC TEXT, 
-    DNB TEXT,
+    readout text,
     Other TEXT,
     FOREIGN KEY (specimenId) REFERENCES Specimens(specimenId)
 );        

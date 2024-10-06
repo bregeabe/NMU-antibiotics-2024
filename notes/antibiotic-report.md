@@ -111,10 +111,4 @@ Users can interact with the software differently depending on if they are facult
 
 **R5** - All non-admin users have a copy of patients and specimen.
 
-## Current Questions
-
-- Do students ever edit patient info / create their own patients. Should they ever be able to?
-
-- Simple but less secure Student IN, or, create users by username and password.
-
-- Do students always work alone or are they occasionally in groups
+## Technologies Used
