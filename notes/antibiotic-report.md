@@ -50,9 +50,9 @@ This results in a professional way for students to document patient and specimen
         - atmosphericConditions
         
 ## Entity relation diagrams
-![diagram](./assets/antibiotic-report-diagram.png)
+![diagram](../assets/antibiotic-report-diagram.png)
 
-![diagram](./assets/EntityRelation.png)
+![diagram](../assets/EntityRelation.png)
 
 ## Queries
 
