@@ -58,9 +58,9 @@ This results in a professional way for students to document patient and specimen
 
 **Q1** - View Patients - Show all patients in the system for admins or patients assigned to students.
 
-**Q3** - View Specimen Requisition | Parameters: SpecimenID - Shows the Specimen Requisition form for specimen in progress at the lab.
+**Q2** - View Specimen Requisition | Parameters: SpecimenID - Shows the Specimen Requisition form for specimen in progress at the lab.
 
-**Q4** - View Work Card | Parameters: SpecimenID - Shows the work card for the specified specimen and patient.
+**Q3** - View Work Card | Parameters: SpecimenID - Shows the work card for the specified specimen and patient.
 
 ## Events
 
