@@ -106,4 +106,6 @@ Users can interact with the software differently depending on if they are facult
 
 ## Security
 
-**R6** - All non-admin users have a copy of patients and specimen.
+**R5** - All non-admin users have a copy of patients and specimen.
+
+## Technologies Used
