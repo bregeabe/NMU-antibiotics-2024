@@ -58,12 +58,9 @@ This results in a professional way for students to document patient and specimen
 
 **Q1** - View Patients - Show all patients in the system for admins or patients assigned to students.
 
-**Q2** - View Specimen history | Parameters: SpecimenID - Shows all specimen linked to patient.
-
 **Q3** - View Specimen Requisition | Parameters: SpecimenID - Shows the Specimen Requisition form for specimen in progress at the lab.
 
 **Q4** - View Work Card | Parameters: SpecimenID - Shows the work card for the specified specimen and patient.
-
 
 ## Events
 
@@ -71,9 +68,9 @@ This results in a professional way for students to document patient and specimen
 
 - Edit Patient Information - Shows the form to edit patient information.
 
-- Add new Specimen - Opens a blank form to create a new Specimen tied to the patient.  
+- Edit Specimen Requisition Form - Specimen Requistion form is only able to be editted by admins.
 
-- Edit Specimen Information - Shows the form to edit specimen information.
+- Edit Specimen Work Card - Shows the form to edit specimen information.
 
 - Remove Patient - Allows admin to delete the selected patient. 
 
@@ -87,11 +84,11 @@ This results in a professional way for students to document patient and specimen
 
 ## User permissions
 
-**R3** -  Admin can view all Patient info.
+**R3** - Admin can view all Patient info.
 
 **R4** - Sign in will be NMU ID Scan.
 
-**R5** - Before each semester starts, all students, patients, and specimen will be cleared off the computer. Admin can generate new patients in the click of a button.
+**R5** - Before each semester starts all students, and specimen will be cleared off the computer.
 
 Users can interact with the software differently depending on if they are faculty or students.
 
@@ -109,12 +106,4 @@ Users can interact with the software differently depending on if they are facult
 
 ## Security
 
-**R5** - All non-admin users have a copy of patients and specimen.
-
-## Current Questions
-
-- Do students ever edit patient info / create their own patients. Should they ever be able to?
-
-- Simple but less secure Student IN, or, create users by username and password.
-
-- Do students always work alone or are they occasionally in groups
+**R6** - All non-admin users have a copy of patients and specimen.
