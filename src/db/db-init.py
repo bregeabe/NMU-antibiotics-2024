@@ -3,12 +3,19 @@ import sqlite3
 connection = sqlite3.connect('antibiotics.db')
 db = connection.cursor()
 
+db.execute('DROP TABLE IF EXISTS SimulatedBiochemInfo')
+db.execute('DROP TABLE IF EXISTS SimulatedBiochems')
+db.execute('DROP TABLE IF EXISTS SimulatedCultures')
+db.execute('DROP TABLE IF EXISTS CultureReadout')
+db.execute('DROP TABLE IF EXISTS Specimens')
+db.execute('DROP TABLE IF EXISTS Patients')
+
 db.execute('''
 CREATE TABLE IF NOT EXISTS Patients (
     patientId INT PRIMARY KEY,
-    patientIdNumber INT,
+    mrn INT,
     name TEXT NOT NULL,
-    dateOfBirth DATE,
+    dob DATE,
     gender TEXT NOT NULL
 );
 ''')
@@ -55,13 +62,6 @@ CREATE TABLE IF NOT EXISTS CultureReadout (
     dayFourTime TIME,
     dayFiveTime TIME,
     dayFinalTime TIME,
-    WBC TEXT,
-    EPI TEXT,
-    GPC TEXT,
-    GPB TEXT,
-    GNC TEXT, 
-    DNB TEXT,
-    Other TEXT,
     FOREIGN KEY (specimenId) REFERENCES Specimens(specimenId)
 );        
 ''')
