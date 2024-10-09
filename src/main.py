@@ -1,5 +1,6 @@
 import tkinter
 import customtkinter
+from lookup_frame import LookupFrame
 
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -54,6 +55,8 @@ class App(customtkinter.CTk):
         self.nmuIN_entry = customtkinter.CTkEntry(self.login_container, placeholder_text="Click", show="*")
         self.nmuIN_entry.pack(pady=10)
 
+        self.nmuIN_entry.bind("<Return>", self.login) #Binds enter to the login method
+
         self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command=self.login)
         self.login_button.pack(pady=10)
 
@@ -77,9 +80,6 @@ class App(customtkinter.CTk):
 
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.scanning)
         self.bt_categories.grid(row=1, column=0, padx=20, pady=10)
-
-        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="My Patients", command=self.lookup)
-        self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
 
         self.bt_statement = customtkinter.CTkButton(self.left_side_panel, text="Create Patient", command=self.create)
         self.bt_statement.grid(row=3, column=0, padx=20, pady=10)
@@ -105,6 +105,11 @@ class App(customtkinter.CTk):
         self.right_dashboard = customtkinter.CTkFrame(self.main_container, corner_radius=10, fg_color="#000811")
         self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
 
+        #Create lookup frame + lookup page button
+        self.lookup_frame = LookupFrame(self)
+        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup_frame.lookup)
+        self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
+
     def show_login_screen(self):
         self.main_container.pack_forget()  # Hide the main container
         self.signup_container.pack_forget()
@@ -128,7 +133,7 @@ class App(customtkinter.CTk):
         self.last_name_entry.delete(0, tkinter.END)
         self.show_login_screen()
 
-    def login(self):
+    def login(self, event=None):
         nmuIN = self.nmuIN_entry.get()
         if nmuIN == "00":
             self.nmuIN_entry.delete(0, tkinter.END)
