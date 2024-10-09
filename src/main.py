@@ -18,23 +18,47 @@ class App(customtkinter.CTk):
         
         self.login_container = customtkinter.CTkFrame(self, corner_radius=10)
         self.main_container = customtkinter.CTkFrame(self, corner_radius=10)
+        self.signup_container = customtkinter.CTkFrame(self, corner_radius=10)
 
-        self.create_login_frame()  
+        self.create_login_frame()
         self.create_main_frame()   
+        self.create_signup_frame()
         
-        self.show_login_screen()  
+        self.show_login_screen()
+
+    def create_signup_frame(self):
+        self.signup_label = customtkinter.CTkLabel(self.signup_container, text="Sign Up", font=customtkinter.CTkFont(size=24, weight="bold"))
+        self.signup_label.pack(pady=50)
+
+        self.username_entry = customtkinter.CTkEntry(self.signup_container, placeholder_text="First Name")
+        self.username_entry.pack(pady=10)
+
+        self.password_entry = customtkinter.CTkEntry(self.signup_container, placeholder_text="Last Name")
+        self.password_entry.pack(pady=10)
+
+        self.signup_button = customtkinter.CTkButton(self.signup_container, text="Sign Up", command=self.show_login_screen)
+        self.signup_button.pack(pady=10)
+
+        self.bt_to_login = customtkinter.CTkButton(self.signup_container, text="Back to Login", command=self.show_login_screen)
+        self.bt_to_login.pack(pady=10)
 
     def create_login_frame(self):
         self.login_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
-        self.login_label = customtkinter.CTkLabel(self.login_container, text="Scan NMU ID", font=customtkinter.CTkFont(size=24, weight="bold"))
+        self.login_label = customtkinter.CTkLabel(self.login_container, text="Scan NMU ID", font=customtkinter.CTkFont(size=32, weight="bold"))
         self.login_label.pack(pady=50)
+
+        self.login_label = customtkinter.CTkLabel(self.login_container, text="or enter the 14 digit code on the back", font=customtkinter.CTkFont(size=12, weight="normal"))
+        self.login_label.pack(pady=10)
 
         self.nmuIN_entry = customtkinter.CTkEntry(self.login_container, placeholder_text="Click", show="*")
         self.nmuIN_entry.pack(pady=10)
 
         self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command=self.login)
         self.login_button.pack(pady=10)
+
+        self.bt_signup = customtkinter.CTkButton(self.login_container, text="Sign Up", command=self.show_signup_screen)
+        self.bt_signup.pack(pady=10)
 
         self.bt_Quit = customtkinter.CTkButton(self.login_container, text="Quit", fg_color= '#EA0000', hover_color = '#B20000', command=self.close_window)
         self.bt_Quit.pack(pady=10)
@@ -83,11 +107,26 @@ class App(customtkinter.CTk):
 
     def show_login_screen(self):
         self.main_container.pack_forget()  # Hide the main container
+        self.signup_container.pack_forget()
         self.login_container.pack(fill=tkinter.BOTH, expand=True)
 
     def show_main_screen(self):
         self.login_container.pack_forget()  # Hide the login container
         self.main_container.pack(fill=tkinter.BOTH, expand=True)
+
+    def show_signup_screen(self):
+        print("Sign up button clicked")
+        self.login_container.pack_forget()   # Hide the login container
+        self.main_container.pack_forget()    # Hide the main container
+        self.signup_container.pack(fill=tkinter.BOTH, expand=True)
+
+    def signup(self):
+        # first_name = self.first_name_entry.get()
+        # last_name = self.last_name_entry.get()
+        # print(f"Sign Up Successful: {first_name} {last_name}")
+        self.first_name_entry.delete(0, tkinter.END)
+        self.last_name_entry.delete(0, tkinter.END)
+        self.show_login_screen()
 
     def login(self):
         nmuIN = self.nmuIN_entry.get()
