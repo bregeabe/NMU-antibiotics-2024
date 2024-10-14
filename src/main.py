@@ -6,7 +6,7 @@ DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
 customtkinter.set_default_color_theme("dark-blue")
 
-
+# You must run db-init and patient-seed before running program to have the program work correctly.
 class App(customtkinter.CTk):
 
     def __init__(self):

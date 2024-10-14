@@ -80,6 +80,7 @@ class LookupFrame:
     
         db.execute('SELECT * FROM Patients')
         patients = db.fetchall()
+        # This is currently very slow, will optimize soon
         rowcount = 2
         for patient in patients:
             temp_frame = customtkinter.CTkFrame(self.main_screen.patient_frame, fg_color="#333333", height=50, corner_radius=0)
