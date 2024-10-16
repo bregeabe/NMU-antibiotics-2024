@@ -1,6 +1,6 @@
 import sqlite3
 
-def get_all_patients():
+def getAllPatients():
     connection = sqlite3.connect('antibiotics.db')
     db = connection.cursor()
     
