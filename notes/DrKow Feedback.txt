@@ -1,3 +1,10 @@
+Antibiotics - Checkpoint 3 feedback
+-----------------------------------
+Much progress was made on the database and Python code.  Keep up the good work.
+
+Grade: A
+
+
 Antibiotics - Milestone 2 feedback (prototype)
 ----------------------------------
 Here is some feedack for you.
