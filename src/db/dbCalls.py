@@ -1,9 +1,9 @@
 import sqlite3
 
-def getAllPatients():
-    connection = sqlite3.connect('antibiotics.db')
-    db = connection.cursor()
-    
+connection = sqlite3.connect('antibiotics.db')
+db = connection.cursor()
+
+def getAllPatients(db):
     db.execute('SELECT * FROM Patients')
     
     patients = db.fetchall()
@@ -16,4 +16,11 @@ def getAllPatients():
     
     connection.close()
 
-get_all_patients()
+def getCultureReadoutForPatientSpecimen(db, patientSpecimenId):
+    db.execute('''
+        SELECT Specimens.cultureId, Specimens.criticalResults, Specimens.dayOneInfo, Specimens.dayTwoInfo, Specimens.dayThreeInfo, Specimens.dayFourInfo, Specimens.dayFiveInfo, Specimens.dayFinalInfo, Specimens.dayOneDate, Specimens.dayTwoDate, Specimens.dayThreeDate, Specimens.dayFourDate, Specimens.dayFiveDate, Specimens.dayFinalDate, Specimens.dayOneTime, Specimens.dayTwoTime, Specimens.dayThreeTime, Specimens.dayFourTime, Specimens.dayFiveTime, Specimens.dayFinalTime 
+        FROM PatientSpecimens
+        JOIN Specimens ON PatientSpecimens.specimenId = Specimens.specimenId
+        Where PatientSpecimens.patientSpecimenId = ?
+    ''', (patientSpecimenId))
+    return db.fetchone()
