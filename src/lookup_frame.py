@@ -78,6 +78,17 @@ class LookupFrame:
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
     
+        # I Believe this to be the correct query to grab the patients in the db belonging to the specific user
+        # Will test once user login logic is added to the system
+
+        '''
+        SELECT *
+        FROM Patients
+        JOIN UserPatients ON Patients.patientId = UserPatients.patientId
+        WHERE UserPatients.userId = ?
+        '''
+
+        # Change with above query once users login logic is added
         db.execute('SELECT * FROM Patients')
         patients = db.fetchall()
         # This is currently very slow, will optimize soon
