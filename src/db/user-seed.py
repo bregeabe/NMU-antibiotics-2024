@@ -15,6 +15,13 @@ for user in users_data:
         VALUES (?, ?, ?)
     ''', (user["userId"], user["firstName"], user["lastName"]))
 
+db.execute('''
+   INSERT INTO UserPatients (userId, patientId) Values (12345678901234, 1);
+''')
+db.execute('''
+    INSERT INTO UserPatients (userId, patientId) Values (23456789012345, 2);
+''')
+
 connection.commit()
 connection.close()
 

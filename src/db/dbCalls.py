@@ -24,3 +24,11 @@ def getCultureReadoutForPatientSpecimen(db, patientSpecimenId):
         Where PatientSpecimens.patientSpecimenId = ?
     ''', (patientSpecimenId))
     return db.fetchone()
+
+def getUserPatients (db, userPatientId):
+    db.execute('''
+        SELECT * From UserPatients;
+    ''')
+    return db.fetchone()
+
+print(getUserPatients(db, 1))
