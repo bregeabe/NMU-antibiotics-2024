@@ -104,9 +104,9 @@ class App(customtkinter.CTk):
         self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
 
         #Create lookup frame + lookup page button
-        self.lookup_frame = LookupFrame(self)
+        self.lookup_frame = PatientFrame(self)
         self.barcode_frame = BarcodeFrame(self)
-        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup_frame.lookup)
+        self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup)
         self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.barcode_frame.barcode)
         self.bt_categories.grid(row=1, column=0, padx=20, pady=10)
