@@ -1,6 +1,6 @@
 import tkinter
 import customtkinter
-from lookup_frame import LookupFrame
+from patientFrame import PatientFrame
 from barcode_frame import BarcodeFrame
 
 DARK_MODE = "dark"
@@ -14,7 +14,7 @@ class App(customtkinter.CTk):
         super().__init__()
         
         self.title("Change Frames")
-        self.overrideredirect(True)
+        #self.overrideredirect(True)
         self.focus_force()
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()))
         
@@ -143,15 +143,16 @@ class App(customtkinter.CTk):
             self.login_label.config(text="Login Failed. Try Again.", fg_color="red")
 
     def lookup(self):
-        self.clear_frame()
-        self.bt_from_frame1 = customtkinter.CTkButton(self.right_dashboard, text="dash", command=lambda: print("test dash"))
-        self.bt_from_frame1.grid(row=0, column=0, padx=20, pady=(10, 0))
+        #Create lookup frame + lookup page button
+        self.lookup_frame = PatientFrame(self)
+        self.lookup_frame.create()
 
     def create(self):
-        self.clear_frame()
-        self.bt_from_frame3 = customtkinter.CTkButton(self.right_dashboard, text="statement", command=lambda: print("test statement"))
-        self.bt_from_frame3.grid(row=0, column=0, padx=20, pady=(10, 0))
-
+        #Create lookup frame + lookup page button
+        #This is only temporary
+        self.create_specimen_frame = PatientFrame(self)
+        self.create_specimen_frame.create()
+        
     def scanning(self):
         self.clear_frame()
 
