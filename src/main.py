@@ -1,6 +1,7 @@
 import tkinter
 import customtkinter
 from patientFrame import PatientFrame
+from barcode_frame import BarcodeFrame
 
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -78,9 +79,6 @@ class App(customtkinter.CTk):
         self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="NMU Antibiotic Report \n", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(40, 10))
 
-        self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.scanning)
-        self.bt_categories.grid(row=1, column=0, padx=20, pady=10)
-
         self.bt_statement = customtkinter.CTkButton(self.left_side_panel, text="Create Patient", command=self.create)
         self.bt_statement.grid(row=3, column=0, padx=20, pady=10)
 
@@ -105,8 +103,13 @@ class App(customtkinter.CTk):
         self.right_dashboard = customtkinter.CTkFrame(self.main_container, corner_radius=10, fg_color="#000811")
         self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
 
+        #Create lookup frame + lookup page button
+        self.lookup_frame = PatientFrame(self)
+        self.barcode_frame = BarcodeFrame(self)
         self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup)
         self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
+        self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.barcode_frame.barcode)
+        self.bt_categories.grid(row=1, column=0, padx=20, pady=10)
 
     def show_login_screen(self):
         self.main_container.pack_forget()  # Hide the main container

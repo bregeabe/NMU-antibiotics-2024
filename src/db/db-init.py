@@ -13,7 +13,7 @@ db.execute('DROP TABLE IF EXISTS PatientSpecimens')
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS Patients (
-    patientId INT PRIMARY KEY,
+    patientId INTEGER PRIMARY KEY,
     mrn INT,
     name TEXT NOT NULL,
     dob DATE,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Patients (
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS Specimens (
-    specimenId INT PRIMARY KEY,
+    specimenId INTEGER PRIMARY KEY AUTOINCREMENT,
     medicalRecordNumber INT,
     name TEXT NOT NULL,
     collectionDate DATE,
@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS Specimens (
     dayFiveTime TIME,
     dayFinalTime TIME,
            
-    simulatedCultureId INT,
     colonyDescription TEXT,
     biochemicalReactions TEXT,
     
@@ -67,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Specimens (
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS SimulatedBiochemInfo (
-    biochemInfoId INT PRIMARY KEY,
+    biochemInfoId INTEGER PRIMARY KEY AUTOINCREMENT,
     simulatedBiochemId INT,
     test TEXT,
     inoculation TEXT,
@@ -89,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Users (
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS UserPatients (
-    userPatientId INT PRIMARY KEY,
+    userPatientId INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INT,
     patientId INT,
     FOREIGN KEY (userId) REFERENCES Users(userId),
@@ -99,7 +98,7 @@ CREATE TABLE IF NOT EXISTS UserPatients (
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS PatientSpecimens (
-    patientSpecimenId INT PRIMARY KEY,
+    patientSpecimenId INTEGER PRIMARY KEY AUTOINCREMENT,
     userPatientId INT,
     specimenId INT,
     FOREIGN KEY (userPatientId) REFERENCES UserPatient(userPatientId),
