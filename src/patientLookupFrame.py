@@ -1,12 +1,13 @@
 import customtkinter
 import sqlite3
 
-class PatientFrame:
+class PatientLookUpFrame:
     def __init__(self, main_screen):
         # Store a reference to the main application
         self.main_screen = main_screen
         # This frame will hold all lookup UI components
         self.right_dashboard = self.main_screen.right_dashboard
+
         self.patientFont = customtkinter.CTkFont(size=15)
 
     def build_search_frame(self):
@@ -65,30 +66,24 @@ class PatientFrame:
     
     def get_work_card(self):
         pass    
-
+    
+    #Creates the patient req form
     def create(self):
+        pass
+
+    def build(self):
         self.main_screen.clear_frame()
+
 
         self.build_frames()
         self.place_frames()
 
-        # Grab all the patients
-        # For each patient, create a new frame, layout all the labels
-
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
-
-        # This should be the query to grab all patient data based on the current user
-        # Change to this when users login logic is created.
-        '''
+        #Change when login logic is created
         db.execute('SELECT * FROM Patients JOIN UserPatients ON Patients.patientId = UserPatients.patientId WHERE UserPatients.userId = 12345678901234')
-        '''
 
-        db.execute('SELECT * FROM Patients')
-            
-        # Change with above query once users login logic is added
         patients = db.fetchall()
-        # This is currently very slow, will optimize soon
         rowcount = 2
         for patient in patients:
             temp_frame = customtkinter.CTkFrame(self.main_screen.patient_frame, fg_color="#333333", height=50, corner_radius=0)
@@ -102,6 +97,7 @@ class PatientFrame:
             temp_frame.grid_columnconfigure((0,1,2,3,4,5), weight=1)
             rowcount += 1
         connection.close()
+        
 
         self.main_screen.patient_frame.grid_rowconfigure((0,1,2), weight=0, minsize=50 )
         self.main_screen.patient_frame.grid_columnconfigure((0), weight=1, uniform="column")

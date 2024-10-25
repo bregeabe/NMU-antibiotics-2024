@@ -1,6 +1,7 @@
 import tkinter
 import customtkinter
-from patientFrame import PatientFrame
+from patientLookupFrame import PatientLookUpFrame
+from patientCreateFrame import PatientCreateFrame
 from barcode_frame import BarcodeFrame
 
 DARK_MODE = "dark"
@@ -104,7 +105,6 @@ class App(customtkinter.CTk):
         self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
 
         #Create lookup frame + lookup page button
-        self.lookup_frame = PatientFrame(self)
         self.barcode_frame = BarcodeFrame(self)
         self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup)
         self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
@@ -144,14 +144,12 @@ class App(customtkinter.CTk):
 
     def lookup(self):
         #Create lookup frame + lookup page button
-        self.lookup_frame = PatientFrame(self)
-        self.lookup_frame.create()
+        self.lookup_frame = PatientLookUpFrame(self)
+        self.lookup_frame.build()
 
     def create(self):
-        #Create lookup frame + lookup page button
-        #This is only temporary
-        self.create_specimen_frame = PatientFrame(self)
-        self.create_specimen_frame.create()
+        self.create_specimen_frame = PatientCreateFrame(self)
+        self.create_specimen_frame.build()
         
     def scanning(self):
         self.clear_frame()
