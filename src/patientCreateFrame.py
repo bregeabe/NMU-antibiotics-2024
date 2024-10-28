@@ -20,9 +20,9 @@ class PatientCreateFrame:
         aFont = customtkinter.CTkFont(size=18)
         self.main_screen.labels_frame = customtkinter.CTkFrame(self.main_screen.patient_frame, height=50, corner_radius=0, fg_color="#333333")
         self.main_screen.name_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="Name", font=aFont, width=200)
-        self.main_screen.dob_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="DOB", font=aFont, width=50)
-        self.main_screen.sex_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="Sex", font=aFont, width=50)
-        self.main_screen.mrn_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="MRN", font=aFont, width=50)
+        self.main_screen.dob_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="DOB", font=aFont, width=160)
+        self.main_screen.sex_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="Sex", font=aFont, width=150)
+        self.main_screen.mrn_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="MRN", font=aFont, width=160)
         self.main_screen.create_label = customtkinter.CTkLabel(self.main_screen.labels_frame, text="Create Patient", font=aFont, width=150)
 
     def place_search_frame(self):
@@ -53,7 +53,7 @@ class PatientCreateFrame:
 
     def place_frames(self):
         self.main_screen.lookup_label.pack(pady=30)
-        self.main_screen.patient_frame.place(relx=0.051, rely=0.1, relwidth=0.9, relheight=0.8) # For some odd reason, relx=0.5 leaves a tiny pixel behind on the right
+        self.main_screen.patient_frame.place(relx=0.05, rely=0.1, relwidth=0.9, relheight=0.8)
 
         self.place_search_frame()
 
@@ -82,9 +82,9 @@ class PatientCreateFrame:
         for patient in patients:
             temp_frame = customtkinter.CTkFrame(self.main_screen.patient_frame, fg_color="#333333", height=50, corner_radius=0)
             customtkinter.CTkLabel(temp_frame, text=patient[2], font=self.patientFont, width=200).grid(column=0, row=0)
-            customtkinter.CTkLabel(temp_frame, text=patient[3], font=self.patientFont, width=50).grid(column=1, row=0)
-            customtkinter.CTkLabel(temp_frame, text=patient[4], font=self.patientFont, width=50).grid(column=2, row=0)
-            customtkinter.CTkLabel(temp_frame, text=patient[1], font=self.patientFont, width=50).grid(column=3, row=0)
+            customtkinter.CTkLabel(temp_frame, text=patient[3], font=self.patientFont, width=150).grid(column=1, row=0)
+            customtkinter.CTkLabel(temp_frame, text=patient[4], font=self.patientFont, width=150).grid(column=2, row=0)
+            customtkinter.CTkLabel(temp_frame, text=patient[1], font=self.patientFont, width=150).grid(column=3, row=0)
             customtkinter.CTkButton(temp_frame, text="Create", command=self.create, font=self.patientFont, width=150).grid(column=4, row=0)
             temp_frame.grid(column=0,row=rowcount,sticky="ew", pady=5)
             temp_frame.grid_columnconfigure((0,1,2,3,4), weight=1)
