@@ -1,5 +1,6 @@
 import tkinter
 import customtkinter
+from spec_req_frame import Specimen_Requisition
 from patientLookupFrame import PatientLookUpFrame
 from patientCreateFrame import PatientCreateFrame
 from barcode_frame import BarcodeFrame
@@ -155,7 +156,9 @@ class App(customtkinter.CTk):
         self.clear_frame()
 
     def requisition(self):
-        self.clear_frame()
+        self.spec_req_frame = Specimen_Requisition(self)
+        self.spec_req_frame.build()
+
 
     def workcard(self):
         self.clear_frame()
