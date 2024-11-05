@@ -159,7 +159,6 @@ class App(customtkinter.CTk):
         self.spec_req_frame = Specimen_Requisition(self)
         self.spec_req_frame.build()
 
-
     def workcard(self):
         self.clear_frame()
 
