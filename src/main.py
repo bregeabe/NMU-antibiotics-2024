@@ -4,6 +4,7 @@ from spec_req_frame import Specimen_Requisition
 from patientLookupFrame import PatientLookUpFrame
 from patientCreateFrame import PatientCreateFrame
 from barcode_frame import BarcodeFrame
+from work_card_frame import Work_Card_Frame
 
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -160,7 +161,8 @@ class App(customtkinter.CTk):
         self.spec_req_frame.build()
 
     def workcard(self):
-        self.clear_frame()
+        self.workcard_frame = Work_Card_Frame(self)
+        self.workcard_frame.build()
 
     def biochems(self):
         self.clear_frame()
