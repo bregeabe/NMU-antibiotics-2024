@@ -14,11 +14,16 @@ class Work_Card_Frame:
         print("displaying workcard")
 
         #Configure the grid
+        self.right_dashboard.grid_columnconfigure(0, weight=1)
 
         # Build each section of the work card
+        self.create_title()
     
     def create_title(self):
-        pass
+        aFont = customtkinter.CTkFont(size=30, weight="bold")
+        title_label = customtkinter.CTkLabel(self.right_dashboard, text="NMU Lab Microbiology Work Card", font=aFont)
+        title_label.grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="ew")
+
 
     def create_prefilled_section(self):
         pass
