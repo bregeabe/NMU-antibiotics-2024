@@ -16,6 +16,7 @@ class Work_Card_Frame:
         # Build each section of the work card
         self.create_title()
         self.create_prefilled_section()
+        self.create_non_prefilled_section()
     
     def create_title(self):
         aFont = customtkinter.CTkFont(size=30, weight="bold")
@@ -57,15 +58,29 @@ class Work_Card_Frame:
 
 
     def create_non_prefilled_section(self):
-        pass
+        non_prefilled_frame = customtkinter.CTkFrame(self.right_dashboard)
+        non_prefilled_frame.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+        non_prefilled_frame.grid_columnconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
 
-    def create_culture_id(self):
-        pass
+        self.create_culture_id(non_prefilled_frame)
+        self.create_priority(non_prefilled_frame)
+        self.create_direct_gram_stain(non_prefilled_frame)
 
-    def create_priority(self):
-        pass
+    def create_culture_id(self, aFrame):
+        culture_id_label = customtkinter.CTkLabel(aFrame, text="Culture ID:", font=self.mainFont)
+        culture_id_label.grid(row=0, column=0, padx=(10, 5), pady=5, sticky="w")
 
-    def create_direct_gram_stain(self):
+        culture_id_entry = customtkinter.CTkEntry(aFrame, placeholder_text="1-20")
+        culture_id_entry.grid(row=0, column=1, padx=(5, 10), pady=5, sticky="ew")
+
+    def create_priority(self, aFrame):
+        priority_label = customtkinter.CTkLabel(aFrame, text="Priority:", font=self.mainFont)
+        priority_label.grid(row=0, column=2, padx=(10, 5), pady=5, sticky="w")
+
+        priority_entry = customtkinter.CTkOptionMenu(aFrame, values=["STAT", "ROUTINE"])
+        priority_entry.grid(row=0, column=3, padx=(5, 10), pady=5, sticky="ew")
+
+    def create_direct_gram_stain(self, aFrame):
         pass
 
     def create_button_section(self):
