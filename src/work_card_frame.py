@@ -17,6 +17,7 @@ class Work_Card_Frame:
         self.create_title()
         self.create_prefilled_section()
         self.create_non_prefilled_section()
+        self.create_direct_gram_stain
     
     def create_title(self):
         aFont = customtkinter.CTkFont(size=30, weight="bold")
@@ -81,7 +82,24 @@ class Work_Card_Frame:
         priority_entry.grid(row=0, column=3, padx=(5, 10), pady=5, sticky="ew")
 
     def create_direct_gram_stain(self, aFrame):
-        pass
+        gram_stain_frame = customtkinter.CTkFrame(aFrame)
+        gram_stain_frame.grid(row=1, column=0, columnspan=8, padx=10, pady=10, sticky="ew")
+
+        gram_stain_label = customtkinter.CTkLabel(gram_stain_frame, text="Direct Gram Stain:", font=self.mainFont)
+        gram_stain_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w")
+
+        gram_stain_options = ["WBCs", "EPIs", "GPC", "GPB", "GNC", "GNB", "Other"]
+
+        for col in range(len(gram_stain_options) * 2):  # Multiply by 2 for label-entry pairs
+            gram_stain_frame.grid_columnconfigure(col, weight=1, uniform="stain")
+
+        for i, option in enumerate(gram_stain_options):
+            label = customtkinter.CTkLabel(gram_stain_frame, text=option, font=self.mainFont)
+            label.grid(row=0, column=(i * 2)+1, padx=(5, 2), pady=2, sticky="e")
+
+            entry = customtkinter.CTkEntry(gram_stain_frame, width=40, placeholder_text="Qty")
+            entry.grid(row=0, column=(i * 2) + 2, padx=(2, 10), pady=2, sticky="w")
+
 
     def create_button_section(self):
         pass
