@@ -17,7 +17,7 @@ class Work_Card_Frame:
         self.create_title()
         self.create_prefilled_section()
         self.create_non_prefilled_section()
-        self.create_direct_gram_stain
+
     
     def create_title(self):
         aFont = customtkinter.CTkFont(size=30, weight="bold")
@@ -66,6 +66,10 @@ class Work_Card_Frame:
         self.create_culture_id(non_prefilled_frame)
         self.create_priority(non_prefilled_frame)
         self.create_direct_gram_stain(non_prefilled_frame)
+        self.create_culture_readout(non_prefilled_frame)
+
+        self.create_button_section(non_prefilled_frame)
+
 
     def create_culture_id(self, aFrame):
         culture_id_label = customtkinter.CTkLabel(aFrame, text="Culture ID:", font=self.mainFont)
@@ -100,6 +104,90 @@ class Work_Card_Frame:
             entry = customtkinter.CTkEntry(gram_stain_frame, width=40, placeholder_text="Qty")
             entry.grid(row=0, column=(i * 2) + 2, padx=(2, 10), pady=2, sticky="w")
 
+    def create_date_and_time(self, culture_readout_frame, i):
+        date_label = customtkinter.CTkLabel(culture_readout_frame, text="Date:", font=self.mainFont)
+        date_label.grid(row=i + 1, columnspan=1, column=4, padx=(5, 10), pady=10, sticky="ew")
 
-    def create_button_section(self):
+        date_entry = customtkinter.CTkEntry(culture_readout_frame)
+        date_entry.grid(row=i + 1, columnspan=1, column=5, padx=(10, 5), pady=10, sticky="ew")
+
+        time_label = customtkinter.CTkLabel(culture_readout_frame, text="Time:", font=self.mainFont)
+        time_label.grid(row=i + 1, columnspan=1, column=6, padx=(5, 10), pady=10, sticky="ew")
+
+        time_entry = customtkinter.CTkEntry(culture_readout_frame)
+        time_entry.grid(row=i + 1, columnspan=1, column=7, padx=(10, 5), pady=10, sticky="ew")
+
+    def create_culture_readout(self, aFrame):
+        culture_readout_frame = customtkinter.CTkFrame(aFrame)
+        culture_readout_frame.grid(row=2, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
+
+        culture_readout_label = customtkinter.CTkLabel(culture_readout_frame, text="Culture Readout", font=self.headerFont)
+        culture_readout_label.grid(row=0, column=0, columnspan=2, padx=25, pady=10, sticky="w")
+
+        for col in range(12):
+            culture_readout_frame.grid_columnconfigure(col, weight=1)
+
+        for i in range(5):
+            day_label = customtkinter.CTkLabel(culture_readout_frame, text=f"Day {i+1}:", font=self.mainFont)
+            day_label.grid(row=i + 1, column=0, padx=(10, 5), pady=10, sticky="e")
+
+            day_entry = customtkinter.CTkEntry(culture_readout_frame, placeholder_text=f"Observations for Day {i+1}")
+            day_entry.grid(row=i + 1, columnspan=3, column=1, padx=(5, 10), pady=10, sticky="ew")
+
+            self.create_date_and_time(culture_readout_frame, i)
+
+        final_label = customtkinter.CTkLabel(culture_readout_frame, text="Final: ", font=self.mainFont)
+        final_label.grid(row=6, column=0, padx=(10, 5), pady=10, sticky="e")
+
+        final_entry = customtkinter.CTkEntry(culture_readout_frame, placeholder_text="Final observations")
+        final_entry.grid(row=6, columnspan=3, column=1, padx=(5, 10), pady=10, sticky="ew")
+
+        self.create_date_and_time(culture_readout_frame, 5)
+
+        # Adjust critical results frame to expand fully
+        critical_results_frame = customtkinter.CTkFrame(aFrame)
+        critical_results_frame.grid(row=2, column=4, columnspan=4, padx=10, pady=10, sticky="nsew")
+        critical_results_frame.grid_columnconfigure(0, weight=1)  # Make sure the column expands
+        critical_results_frame.grid_rowconfigure(1, weight=1)  # Ensure row expands vertically
+
+        critical_results_label = customtkinter.CTkLabel(critical_results_frame, text="Critical Results", font=self.headerFont)
+        critical_results_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+
+        # Adjust the critical results entry to fill entire frame
+        critical_results_entry = customtkinter.CTkTextbox(critical_results_frame, height=60)
+        critical_results_entry.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+
+    def go_to_biochems(self):
         pass
+
+    def go_to_culture_notes(self):
+        pass
+
+    def create_button_section(self, non_prefilled_frame):
+
+        button_frame = customtkinter.CTkFrame(non_prefilled_frame)
+        button_frame.grid(row=4, column=0, columnspan=8, padx=10, pady=10, sticky="ew")
+
+        # Configure middle columns to take up the extra space
+        for col in range(2, 6):
+            button_frame.grid_columnconfigure(col, weight=1)
+        
+        culture_notes_button = customtkinter.CTkButton(button_frame, text="Culture Notes", command=self.go_to_culture_notes)
+        culture_notes_button.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+        biochems_button = customtkinter.CTkButton(button_frame, text="Biochems", command=self.go_to_biochems)
+        biochems_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+        cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", command=self.cancel)
+        cancel_button.grid(row=0, column=6, padx=5, pady=5, sticky="e")
+
+        save_button = customtkinter.CTkButton(button_frame, text="Save", command=self.save)
+        save_button.grid(row=0, column=7, padx=5, pady=5, sticky="e")
+
+    def cancel(self):
+        self.main_screen.clear_frame()
+        self.main_screen.lookup()
+
+    def save(self):
+        self.main_screen.clear_frame()
+        self.main_screen.lookup()

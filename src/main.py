@@ -28,7 +28,10 @@ class App(customtkinter.CTk):
         self.create_login_frame()
         self.create_main_frame()   
         self.create_signup_frame()
-        
+        self.create_specimen_frame = PatientCreateFrame(self)
+        self.lookup_frame = PatientLookUpFrame(self)
+        self.spec_req_frame = Specimen_Requisition(self)
+        self.workcard_frame = Work_Card_Frame(self)
         self.show_login_screen()
 
     def create_signup_frame(self):
@@ -113,6 +116,7 @@ class App(customtkinter.CTk):
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Barcode Scanning", command=self.barcode_frame.barcode)
         self.bt_categories.grid(row=1, column=0, padx=20, pady=10)
 
+
     def show_login_screen(self):
         self.main_container.pack_forget()  # Hide the main container
         self.signup_container.pack_forget()
@@ -146,22 +150,18 @@ class App(customtkinter.CTk):
 
     def lookup(self):
         #Create lookup frame + lookup page button
-        self.lookup_frame = PatientLookUpFrame(self)
         self.lookup_frame.build()
 
     def create(self):
-        self.create_specimen_frame = PatientCreateFrame(self)
         self.create_specimen_frame.build()
         
     def scanning(self):
         self.clear_frame()
 
     def requisition(self):
-        self.spec_req_frame = Specimen_Requisition(self)
         self.spec_req_frame.build()
 
     def workcard(self):
-        self.workcard_frame = Work_Card_Frame(self)
         self.workcard_frame.build()
 
     def biochems(self):
