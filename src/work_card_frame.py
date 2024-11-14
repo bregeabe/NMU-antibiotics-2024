@@ -172,7 +172,7 @@ class Work_Card_Frame:
         for col in range(2, 6):
             button_frame.grid_columnconfigure(col, weight=1)
         
-        culture_notes_button = customtkinter.CTkButton(button_frame, text="Culture Notes", command=self.go_to_culture_notes)
+        culture_notes_button = customtkinter.CTkButton(button_frame, text="Culture Notes and Tests", command=self.go_to_culture_notes)
         culture_notes_button.grid(row=0, column=0, padx=5, pady=5, sticky="w")
         
         cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", command=self.cancel)
