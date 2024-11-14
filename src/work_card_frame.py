@@ -1,4 +1,5 @@
 import customtkinter
+from culture_notes import Culture_Notes
 
 class Work_Card_Frame:
     def __init__(self, main_screen):
@@ -7,6 +8,8 @@ class Work_Card_Frame:
 
         self.mainFont = customtkinter.CTkFont(size=16)
         self.headerFont = customtkinter.CTkFont(size=18, weight="bold")
+
+        self.notes = Culture_Notes(main_screen)
 
     def build(self):
         self.main_screen.clear_frame()
@@ -29,10 +32,9 @@ class Work_Card_Frame:
         prefilled_frame = customtkinter.CTkFrame(self.right_dashboard)
         prefilled_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
         
-        for col in range(4):  # Four columns for a compact layout
+        for col in range(4): 
             prefilled_frame.grid_columnconfigure(col, weight=1)
 
-        # Pre-filled fields in a more compact, multi-column layout
         fields = [
             ("Data Collected:", "mm/dd/yy"),
             ("Time Collected:", "HH:MM"),
@@ -144,7 +146,6 @@ class Work_Card_Frame:
 
         self.create_date_and_time(culture_readout_frame, 5)
 
-        # Adjust critical results frame to expand fully
         critical_results_frame = customtkinter.CTkFrame(aFrame)
         critical_results_frame.grid(row=2, column=4, columnspan=4, padx=10, pady=10, sticky="nsew")
         critical_results_frame.grid_columnconfigure(0, weight=1)  # Make sure the column expands
@@ -153,7 +154,6 @@ class Work_Card_Frame:
         critical_results_label = customtkinter.CTkLabel(critical_results_frame, text="Critical Results", font=self.headerFont)
         critical_results_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="w")
 
-        # Adjust the critical results entry to fill entire frame
         critical_results_entry = customtkinter.CTkTextbox(critical_results_frame, height=60)
         critical_results_entry.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
@@ -161,7 +161,7 @@ class Work_Card_Frame:
         pass
 
     def go_to_culture_notes(self):
-        pass
+        self.notes.build()
 
     def create_button_section(self, non_prefilled_frame):
 
@@ -174,10 +174,7 @@ class Work_Card_Frame:
         
         culture_notes_button = customtkinter.CTkButton(button_frame, text="Culture Notes", command=self.go_to_culture_notes)
         culture_notes_button.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-
-        biochems_button = customtkinter.CTkButton(button_frame, text="Biochems", command=self.go_to_biochems)
-        biochems_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-
+        
         cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", command=self.cancel)
         cancel_button.grid(row=0, column=6, padx=5, pady=5, sticky="e")
 
