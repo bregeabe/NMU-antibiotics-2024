@@ -8,7 +8,7 @@ class PatientLookUpFrame:
         # This frame will hold all lookup UI components
         self.right_dashboard = self.main_screen.right_dashboard
 
-        self.patientFont = customtkinter.CTkFont(size=15)
+        self.patientFont = customtkinter.CTkFont(size=16)
 
     def build_search_frame(self):
         self.main_screen.search_frame = customtkinter.CTkFrame(self.main_screen.patient_frame, corner_radius=0, height=50, fg_color="#232323")
