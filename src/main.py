@@ -1,5 +1,6 @@
 import tkinter
 import customtkinter
+import sqlite3
 from spec_req_frame import Specimen_Requisition
 from patientLookupFrame import PatientLookUpFrame
 from patientCreateFrame import PatientCreateFrame
@@ -30,6 +31,8 @@ class App(customtkinter.CTk):
         
         self.show_login_screen()
 
+        self.pending_user_id = None
+
     def create_signup_frame(self):
         self.signup_label = customtkinter.CTkLabel(self.signup_container, text="Sign Up", font=customtkinter.CTkFont(size=24, weight="bold"))
         self.signup_label.pack(pady=50)
@@ -40,7 +43,7 @@ class App(customtkinter.CTk):
         self.password_entry = customtkinter.CTkEntry(self.signup_container, placeholder_text="Last Name")
         self.password_entry.pack(pady=10)
 
-        self.signup_button = customtkinter.CTkButton(self.signup_container, text="Sign Up", command=self.show_login_screen)
+        self.signup_button = customtkinter.CTkButton(self.signup_container, text="Sign Up", command=self.signup)
         self.signup_button.pack(pady=10)
 
         self.bt_to_login = customtkinter.CTkButton(self.signup_container, text="Back to Login", command=self.show_login_screen)
@@ -62,9 +65,6 @@ class App(customtkinter.CTk):
 
         self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command=self.login)
         self.login_button.pack(pady=10)
-
-        self.bt_signup = customtkinter.CTkButton(self.login_container, text="Sign Up", command=self.show_signup_screen)
-        self.bt_signup.pack(pady=10)
 
         self.bt_Quit = customtkinter.CTkButton(self.login_container, text="Quit", fg_color= '#EA0000', hover_color = '#B20000', command=self.close_window)
         self.bt_Quit.pack(pady=10)
@@ -126,22 +126,48 @@ class App(customtkinter.CTk):
         self.login_container.pack_forget()   # Hide the login container
         self.main_container.pack_forget()    # Hide the main container
         self.signup_container.pack(fill=tkinter.BOTH, expand=True)
+        self.signup_label = customtkinter.CTkLabel(self.signup_container, text="", fg_color="transparent")
 
     def signup(self):
-        # first_name = self.first_name_entry.get()
-        # last_name = self.last_name_entry.get()
-        # print(f"Sign Up Successful: {first_name} {last_name}")
-        self.first_name_entry.delete(0, tkinter.END)
-        self.last_name_entry.delete(0, tkinter.END)
-        self.show_login_screen()
+        first_name = self.username_entry.get()
+        last_name = self.password_entry.get()
+
+        user_id = self.pending_user_id
+        print(user_id)
+
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+
+        try:
+            db.execute('''INSERT INTO Users (nmuIN, firstName, lastName) VALUES (?, ?, ?)''', (user_id, first_name, last_name))
+            connection.commit()
+            self.username_entry.delete(0, tkinter.END)
+            self.password_entry.delete(0, tkinter.END)
+
+            self.login_label.configure(text="Sign up successful! Please log in.", fg_color="green")
+            self.show_login_screen()
+        except sqlite3.IntegrityError:
+            self.login_label.configure(text="User ID already exists. Try logging in.", fg_color="red")
+        finally:
+            connection.close()
 
     def login(self, event=None):
-        nmuIN = self.nmuIN_entry.get()
-        if nmuIN == "00":
+        nmuIN = int(self.nmuIN_entry.get())
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+
+        db.execute("SELECT * FROM Users WHERE nmuIN = ?", (nmuIN,))
+        user = db.fetchone()
+
+        if user:
+            print("User found in the database.")
             self.nmuIN_entry.delete(0, tkinter.END)
             self.show_main_screen()
         else:
-            self.login_label.config(text="Login Failed. Try Again.", fg_color="red")
+            self.pending_user_id = nmuIN
+            self.nmuIN_entry.delete(0, tkinter.END)
+            self.show_signup_screen()
+            self.signup_label.configure(text="User not found. Please sign up.")
 
     def lookup(self):
         #Create lookup frame + lookup page button
