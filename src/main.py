@@ -16,18 +16,18 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
-        
+
         self.title("Change Frames")
         #self.overrideredirect(True)
         self.focus_force()
         self.geometry("{0}x{1}+0+0".format(self.winfo_screenwidth(), self.winfo_screenheight()))
-        
+
         self.login_container = customtkinter.CTkFrame(self, corner_radius=10)
         self.main_container = customtkinter.CTkFrame(self, corner_radius=10)
         self.signup_container = customtkinter.CTkFrame(self, corner_radius=10)
 
         self.create_login_frame()
-        self.create_main_frame()   
+        self.create_main_frame()
         self.create_signup_frame()
         self.create_specimen_frame = PatientCreateFrame(self)
         self.lookup_frame = PatientLookUpFrame(self)
@@ -75,7 +75,7 @@ class App(customtkinter.CTk):
 
     def create_main_frame(self):
         self.main_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
-        
+
         self.left_side_panel = customtkinter.CTkFrame(self.main_container, width=150, corner_radius=10)
         self.left_side_panel.pack(side=tkinter.LEFT, fill=tkinter.Y, expand=False, padx=5, pady=5)
 
@@ -118,27 +118,24 @@ class App(customtkinter.CTk):
 
 
     def show_login_screen(self):
-        self.main_container.pack_forget()  # Hide the main container
+        self.main_container.pack_forget()
         self.signup_container.pack_forget()
         self.login_container.pack(fill=tkinter.BOTH, expand=True)
 
     def show_main_screen(self):
-        self.login_container.pack_forget()  # Hide the login container
+        self.login_container.pack_forget()
         self.main_container.pack(fill=tkinter.BOTH, expand=True)
 
     def show_signup_screen(self):
-        print("Sign up button clicked")
-        self.login_container.pack_forget()   # Hide the login container
-        self.main_container.pack_forget()    # Hide the main container
+        self.login_container.pack_forget()
+        self.main_container.pack_forget()
         self.signup_container.pack(fill=tkinter.BOTH, expand=True)
         self.signup_label = customtkinter.CTkLabel(self.signup_container, text="", fg_color="transparent")
 
     def signup(self):
         first_name = self.username_entry.get()
         last_name = self.password_entry.get()
-
         user_id = self.pending_user_id
-        print(user_id)
 
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
@@ -165,7 +162,6 @@ class App(customtkinter.CTk):
         user = db.fetchone()
 
         if user:
-            print("User found in the database.")
             self.nmuIN_entry.delete(0, tkinter.END)
             self.show_main_screen()
         else:
@@ -180,7 +176,7 @@ class App(customtkinter.CTk):
 
     def create(self):
         self.create_specimen_frame.build()
-        
+
     def scanning(self):
         self.clear_frame()
 
