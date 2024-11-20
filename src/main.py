@@ -6,6 +6,8 @@ from patientLookupFrame import PatientLookUpFrame
 from patientCreateFrame import PatientCreateFrame
 from barcode_frame import BarcodeFrame
 from work_card_frame import Work_Card_Frame
+from culture_notes import Culture_Notes
+import dbCalls
 
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -16,7 +18,7 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
-
+        self.current_user_id = None
         self.title("Change Frames")
         #self.overrideredirect(True)
         self.focus_force()
@@ -33,8 +35,8 @@ class App(customtkinter.CTk):
         self.lookup_frame = PatientLookUpFrame(self)
         self.spec_req_frame = Specimen_Requisition(self)
         self.workcard_frame = Work_Card_Frame(self)
+        self.culture_frame = Culture_Notes(self)
         self.show_login_screen()
-
         self.pending_user_id = None
 
     def create_signup_frame(self):
@@ -65,7 +67,7 @@ class App(customtkinter.CTk):
         self.nmuIN_entry = customtkinter.CTkEntry(self.login_container, placeholder_text="Click", show="*")
         self.nmuIN_entry.pack(pady=10)
 
-        self.nmuIN_entry.bind("<Return>", self.login) #Binds enter to the login method
+        self.nmuIN_entry.bind("<Return>", self.login)
 
         self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command=self.login)
         self.login_button.pack(pady=10)
@@ -109,7 +111,6 @@ class App(customtkinter.CTk):
         self.right_dashboard = customtkinter.CTkFrame(self.main_container, corner_radius=10, fg_color="#000811")
         self.right_dashboard.pack(in_=self.right_side_panel, side=tkinter.TOP, fill=tkinter.BOTH, expand=True, padx=0, pady=0)
 
-        #Create lookup frame + lookup page button
         self.barcode_frame = BarcodeFrame(self)
         self.bt_dashboard = customtkinter.CTkButton(self.left_side_panel, text="Patient Lookup", command=self.lookup)
         self.bt_dashboard.grid(row=2, column=0, padx=20, pady=10)
@@ -133,16 +134,19 @@ class App(customtkinter.CTk):
         self.signup_label = customtkinter.CTkLabel(self.signup_container, text="", fg_color="transparent")
 
     def signup(self):
-        first_name = self.username_entry.get()
-        last_name = self.password_entry.get()
-        user_id = self.pending_user_id
+        firstName = self.username_entry.get()
+        lastName = self.password_entry.get()
+        userId = self.pending_user_id
 
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
 
         try:
-            db.execute('''INSERT INTO Users (nmuIN, firstName, lastName) VALUES (?, ?, ?)''', (user_id, first_name, last_name))
+            db.execute('''INSERT INTO Users (nmuIN, firstName, lastName) VALUES (?, ?, ?)''', (userId, firstName, lastName))
             connection.commit()
+            db.execute("SELECT userId FROM Users WHERE nmuIN = ?", (userId,))
+            new_user = db.fetchone()
+            self.current_user_id = new_user[0]
             self.username_entry.delete(0, tkinter.END)
             self.password_entry.delete(0, tkinter.END)
 
@@ -158,10 +162,12 @@ class App(customtkinter.CTk):
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
 
-        db.execute("SELECT * FROM Users WHERE nmuIN = ?", (nmuIN,))
+        db.execute("SELECT userId FROM Users WHERE nmuIN = ?", (nmuIN,))
         user = db.fetchone()
 
         if user:
+            self.current_user_id = user[0]
+            # print("Login Successful. Current User ID:", self.current_user_id) 
             self.nmuIN_entry.delete(0, tkinter.END)
             self.show_main_screen()
         else:
@@ -171,11 +177,14 @@ class App(customtkinter.CTk):
             self.signup_label.configure(text="User not found. Please sign up.")
 
     def lookup(self):
-        #Create lookup frame + lookup page button
+        if hasattr(self, 'patient_frame') and self.patient_frame:
+            self.patient_frame.destroy()
+        self.lookup_frame = PatientLookUpFrame(self)
         self.lookup_frame.build()
 
     def create(self):
         self.create_specimen_frame.build()
+
 
     def scanning(self):
         self.clear_frame()
@@ -187,7 +196,7 @@ class App(customtkinter.CTk):
         self.workcard_frame.build()
 
     def biochems(self):
-        self.clear_frame()
+        self.culture_frame.build()
 
     def close_window(self):
         App.destroy(self)
@@ -195,6 +204,35 @@ class App(customtkinter.CTk):
     def clear_frame(self):
         for widget in self.right_dashboard.winfo_children():
             widget.destroy()
+
+    def open_specimen_req(self, patient_data, patient_id):
+        try:
+            self.clear_frame()
+            self.spec_req_frame = Specimen_Requisition(self, patient_id=patient_id)
+            self.spec_req_frame.build()
+
+            if callable(getattr(self.spec_req_frame, 'populate_form', None)):
+                self.spec_req_frame.populate_form(patient_data)
+            else:
+                raise AttributeError("populate_form method is not defined or callable in Specimen_Requisition.")
+        except Exception as e:
+            print(f"Error in open_specimen_req: {e}")
+
+    def open_work_card(self, patient_data, patient_id):
+        try:
+            self.clear_frame()
+            self.workcard_frame = Work_Card_Frame(self)
+            self.workcard_frame.build()
+
+            if hasattr(self.workcard_frame, 'populate_form') and callable(self.workcard_frame.populate_form):
+                # print(f"Populating Work Card for patient ID: {patient_id}")
+                self.workcard_frame.populate_form(patient_data)
+            else:
+                print("populate_form method is not defined or callable in Work_Card_Frame.")
+        except Exception as e:
+            print(f"Error in open_work_card: {e}")
+
+
 
 
 a = App()
