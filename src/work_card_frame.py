@@ -1,5 +1,6 @@
 import customtkinter
 from culture_notes import Culture_Notes
+import sqlite3
 
 class Work_Card_Frame:
     def __init__(self, main_screen):
@@ -185,6 +186,88 @@ class Work_Card_Frame:
         self.main_screen.clear_frame()
         self.main_screen.lookup()
 
+    """
+    NOT FUNCTIONAL YET
+    """
     def save(self):
-        self.main_screen.clear_frame()
-        self.main_screen.lookup()
+        try:
+            connection = sqlite3.connect('antibiotics.db')
+            cursor = connection.cursor()
+            fields = {
+                "Data Collected": None,
+                "Time Collected": None,
+                "Tech": None,
+                "Patient Name": None,
+                "MRN": None,
+                "Doctor": None,
+                "Sex": None,
+                "Specimen Source": None
+            }
+
+            for widget in self.right_dashboard.winfo_children():
+                if isinstance(widget, customtkinter.CTkFrame):
+                    for child in widget.winfo_children():
+                        if isinstance(child, customtkinter.CTkEntry):
+                            for label, placeholder in fields.items():
+                                if child.placeholder_text == placeholder:
+                                    fields[label] = child.get()
+
+            data_collected = fields["Data Collected"]
+            time_collected = fields["Time Collected"]
+            tech = fields["Tech"]
+            patient_name = fields["Patient Name"]
+            mrn = fields["MRN"]
+            doctor = fields["Doctor"]
+            sex = fields["Sex"]
+            specimen_source = fields["Specimen Source"]
+
+            if not patient_name or not mrn:
+                print("Patient Name and MRN are required.")
+                return
+
+            cursor.execute("SELECT specimenId FROM Specimens WHERE medicalRecordNumber = ?", (mrn,))
+            specimen = cursor.fetchone()
+
+            if specimen:
+                cursor.execute('''
+                    UPDATE Specimens
+                    SET collectionDate = ?, collectionTime = ?, provider = ?, specimenType = ?
+                    WHERE medicalRecordNumber = ?
+                ''', (data_collected, time_collected, doctor, specimen_source, mrn))
+                print(f"Updated existing specimen with MRN: {mrn}")
+            else:
+                cursor.execute('''
+                    INSERT INTO Specimens (medicalRecordNumber, name, collectionDate, collectionTime, provider, specimenType)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (mrn, patient_name, data_collected, time_collected, doctor, specimen_source))
+                print(f"Inserted new specimen for MRN: {mrn}")
+
+            connection.commit()
+            connection.close()
+            print("Data saved successfully.")
+            self.main_screen.clear_frame()
+            self.main_screen.lookup()
+        except Exception as e:
+            print(f"Error in save: {e}")
+
+    """
+    NOT FUNCTIONAL YET
+    """
+    def populate_form(self, patient_data):
+        try:
+            name, dob, mrn, gender = patient_data[:4]
+
+            prefilled_fields = [
+                ("Patient Name:", name),
+                ("MRN:", mrn),
+                ("Sex:", gender),
+                ("Data Collected:", dob)
+            ]
+
+            for field_label, value in prefilled_fields:
+                for widget in self.right_dashboard.winfo_children():
+                    if isinstance(widget, customtkinter.CTkEntry) and widget.placeholder_text == field_label:
+                        widget.insert(0, value)
+                        break
+        except Exception as e:
+            print(f"Error in populate_form for Work Card: {e}")

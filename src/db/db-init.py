@@ -13,7 +13,7 @@ db.execute('DROP TABLE IF EXISTS PatientSpecimens')
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS Patients (
-    patientId INTEGER PRIMARY KEY,
+    patientId INTEGER PRIMARY KEY AUTOINCREMENT,
     mrn INT,
     name TEXT NOT NULL,
     dob DATE,
@@ -24,18 +24,15 @@ CREATE TABLE IF NOT EXISTS Patients (
 db.execute('''
 CREATE TABLE IF NOT EXISTS Specimens (
     specimenId INTEGER PRIMARY KEY AUTOINCREMENT,
-    medicalRecordNumber INT,
-    name TEXT NOT NULL,
     collectionDate DATE,
     collectionTime TIME,
     diagnosis TEXT,
     provider TEXT,
-    receivingTherapy bool,
+    receivingTherapy BOOL,
     specimenType TEXT,
     testOrdered TEXT,
     receivedInLab TIME,
-    specimenAcceptable bool,
-    
+    specimenAcceptable BOOL,
     cultureId INT,
     criticalResults TEXT,
     dayOneInfo TEXT,
@@ -56,10 +53,8 @@ CREATE TABLE IF NOT EXISTS Specimens (
     dayFourTime TIME,
     dayFiveTime TIME,
     dayFinalTime TIME,
-           
     colonyDescription TEXT,
     biochemicalReactions TEXT,
-    
     simulatedBiochemId INT
 );
 ''')
@@ -79,11 +74,11 @@ CREATE TABLE IF NOT EXISTS SimulatedBiochemInfo (
 
 db.execute('''
 CREATE TABLE IF NOT EXISTS Users (
-    userId INT PRIMARY KEY,
-    nmuIN INT,
+    userId INTEGER PRIMARY KEY AUTOINCREMENT,
+    nmuIN INTEGER UNIQUE NOT NULL,
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL
-);  
+);
 ''')
 
 db.execute('''
