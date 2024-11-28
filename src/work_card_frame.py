@@ -11,10 +11,12 @@ class Work_Card_Frame:
         self.headerFont = customtkinter.CTkFont(size=18, weight="bold")
 
         self.notes = Culture_Notes(main_screen)
+        self.placeholders = {}
+
 
     def build(self):
         self.main_screen.clear_frame()
-        
+
         self.right_dashboard.grid_columnconfigure(0, weight=1)
 
         # Build each section of the work card
@@ -22,7 +24,7 @@ class Work_Card_Frame:
         self.create_prefilled_section()
         self.create_non_prefilled_section()
 
-    
+
     def create_title(self):
         aFont = customtkinter.CTkFont(size=30, weight="bold")
         title_label = customtkinter.CTkLabel(self.right_dashboard, text="NMU Lab Microbiology Work Card", font=aFont)
@@ -32,34 +34,33 @@ class Work_Card_Frame:
     def create_prefilled_section(self):
         prefilled_frame = customtkinter.CTkFrame(self.right_dashboard)
         prefilled_frame.grid(row=1, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
-        
-        for col in range(4): 
+
+        for col in range(4):
             prefilled_frame.grid_columnconfigure(col, weight=1)
 
         fields = [
-            ("Data Collected:", "mm/dd/yy"),
-            ("Time Collected:", "HH:MM"),
-            ("Tech:", ""),
-            ("Patient Name:", ""),
-            ("MRN:", ""),
-            ("Doctor:", ""),
-            ("Sex:", ""),
-            ("Specimen Source:", "Description of the source")
+            ("Patient Name", ""),
+            ("Patient DOB", ""),
+            ("MRN", ""),
+            ("Sex", ""),
+            ("Date Collected", "mm/dd/yy"),
+            ("Time Collected", "HH:MM"),
+            ("Specimen Diagnosis", ""),
+            ("Patient Doctor", ""),
         ]
 
-        prefilled_frame.grid_rowconfigure(0, minsize=10)  # Spacer row at the top
-        prefilled_frame.grid_rowconfigure(100, minsize=10)  # Spacer row at the bottom
+        prefilled_frame.grid_rowconfigure(0, minsize=10)
+        prefilled_frame.grid_rowconfigure(100, minsize=10)
 
-        # Place fields in two items per row for a compact layout
-        # Fields is a list of tuples, so place it according to that layout
         for i, (label, placeholder) in enumerate(fields):
-            row, col = divmod(i, 4)  # Two rows, four columns
+            row, col = divmod(i, 4)
             field_label = customtkinter.CTkLabel(prefilled_frame, text=label, font=self.mainFont)
             field_label.grid(row=row * 2, column=col, padx=(10, 5), pady=2, sticky="w")
-            
+
             field_entry = customtkinter.CTkEntry(prefilled_frame, placeholder_text=placeholder)
             field_entry.grid(row=row * 2 + 1, column=col, padx=(5, 10), pady=2, sticky="ew")
 
+            setattr(self, f"{label.replace(' ', '_').lower()}_entry", field_entry)
 
     def create_non_prefilled_section(self):
         non_prefilled_frame = customtkinter.CTkFrame(self.right_dashboard)
@@ -73,13 +74,13 @@ class Work_Card_Frame:
 
         self.create_button_section(non_prefilled_frame)
 
-
     def create_culture_id(self, aFrame):
         culture_id_label = customtkinter.CTkLabel(aFrame, text="Culture ID:", font=self.mainFont)
         culture_id_label.grid(row=0, column=0, padx=(10, 5), pady=5, sticky="w")
 
         culture_id_entry = customtkinter.CTkEntry(aFrame, placeholder_text="1-20")
         culture_id_entry.grid(row=0, column=1, padx=(5, 10), pady=5, sticky="ew")
+        self.placeholders["Culture ID"] = culture_id_entry
 
     def create_priority(self, aFrame):
         priority_label = customtkinter.CTkLabel(aFrame, text="Priority:", font=self.mainFont)
@@ -87,6 +88,7 @@ class Work_Card_Frame:
 
         priority_entry = customtkinter.CTkOptionMenu(aFrame, values=["STAT", "ROUTINE"])
         priority_entry.grid(row=0, column=3, padx=(5, 10), pady=5, sticky="ew")
+        self.placeholders["Priority"] = priority_entry
 
     def create_direct_gram_stain(self, aFrame):
         gram_stain_frame = customtkinter.CTkFrame(aFrame)
@@ -158,8 +160,44 @@ class Work_Card_Frame:
         critical_results_entry = customtkinter.CTkTextbox(critical_results_frame, height=60)
         critical_results_entry.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
-    def go_to_biochems(self):
-        pass
+    def get_gram_stain_value(self, option):
+        gram_stain_values = {
+            "WBCs": self.placeholders.get("WBCs"),
+            "EPIs": self.placeholders.get("EPIs"),
+            "GPC": self.placeholders.get("GPC"),
+            "GPB": self.placeholders.get("GPB"),
+            "GNC": self.placeholders.get("GNC"),
+            "GNB": self.placeholders.get("GNB"),
+            "Other": self.placeholders.get("Other")
+        }
+        return gram_stain_values.get(option, None).get() if gram_stain_values.get(option) else None
+
+    def get_date_and_time(self, day_number):
+        date_key = f"day_{day_number}_date"
+        time_key = f"day_{day_number}_time"
+
+        date_entry = self.placeholders.get(date_key)
+        time_entry = self.placeholders.get(time_key)
+
+        date_value = date_entry.get() if date_entry else None
+        time_value = time_entry.get() if time_entry else None
+
+        return date_value, time_value
+    
+    def get_day_observations(self, day_number):
+        day_key = f"day_{day_number}_observations"
+        day_entry = self.placeholders.get(day_key)
+        return day_entry.get() if day_entry else None
+
+    def get_final_observations(self):
+        final_entry = self.placeholders.get("final_observations")
+        return final_entry.get() if final_entry else None
+
+    def get_critical_results(self):
+        critical_results_entry = self.placeholders.get("critical_results")
+        return critical_results_entry.get() if critical_results_entry else None
+
+
 
     def go_to_culture_notes(self):
         self.notes.build()
@@ -172,10 +210,10 @@ class Work_Card_Frame:
         # Configure middle columns to take up the extra space
         for col in range(2, 6):
             button_frame.grid_columnconfigure(col, weight=1)
-        
+
         culture_notes_button = customtkinter.CTkButton(button_frame, text="Culture Notes and Tests", command=self.go_to_culture_notes)
         culture_notes_button.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        
+
         cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", command=self.cancel)
         cancel_button.grid(row=0, column=6, padx=5, pady=5, sticky="e")
 
@@ -186,88 +224,81 @@ class Work_Card_Frame:
         self.main_screen.clear_frame()
         self.main_screen.lookup()
 
-    """
-    NOT FUNCTIONAL YET
-    """
     def save(self):
         try:
-            connection = sqlite3.connect('antibiotics.db')
-            cursor = connection.cursor()
-            fields = {
-                "Data Collected": None,
-                "Time Collected": None,
-                "Tech": None,
-                "Patient Name": None,
-                "MRN": None,
-                "Doctor": None,
-                "Sex": None,
-                "Specimen Source": None
+            patient_data = {
+                "culture_id": None,
+                "priority": None,
+                "direct_gram_stain": {
+                    "WBCs": None,
+                    "EPIs": None,
+                    "GPC": None,
+                    "GPB": None,
+                    "GNC": None,
+                    "GNB": None,
+                    "Other": None,
+                },
+                "day_observations": {},
+                "final_observations": None,
+                "critical_results": None
             }
 
-            for widget in self.right_dashboard.winfo_children():
-                if isinstance(widget, customtkinter.CTkFrame):
-                    for child in widget.winfo_children():
-                        if isinstance(child, customtkinter.CTkEntry):
-                            for label, placeholder in fields.items():
-                                if child.placeholder_text == placeholder:
-                                    fields[label] = child.get()
+            # Adding prefilled fields (uncomment and fill in for patient_name, etc.)
+            # patient_data["name"] = self.patient_name_entry.get()
+            # patient_data["dob"] = self.patient_dob_entry.get()
+            # patient_data["mrn"] = self.mrn_entry.get()
+            # patient_data["sex"] = self.sex_entry.get()
+            # patient_data["collection_date"] = self.date_collected_entry.get()
+            # patient_data["collection_time"] = self.time_collected_entry.get()
+            # patient_data["diagnosis"] = self.specimen_diagnosis_entry.get()
+            # patient_data["provider"] = self.patient_doctor_entry.get()
 
-            data_collected = fields["Data Collected"]
-            time_collected = fields["Time Collected"]
-            tech = fields["Tech"]
-            patient_name = fields["Patient Name"]
-            mrn = fields["MRN"]
-            doctor = fields["Doctor"]
-            sex = fields["Sex"]
-            specimen_source = fields["Specimen Source"]
+            # Adding Culture ID and Priority
+            patient_data["culture_id"] = self.placeholders["Culture ID"].get()
+            patient_data["priority"] = self.placeholders["Priority"].get()
 
-            if not patient_name or not mrn:
-                print("Patient Name and MRN are required.")
-                return
+            # Adding Direct Gram Stain values
+            gram_stain_options = ["WBCs", "EPIs", "GPC", "GPB", "GNC", "GNB", "Other"]
+            for option in gram_stain_options:
+                patient_data["direct_gram_stain"][option] = self.get_gram_stain_value(option)
 
-            cursor.execute("SELECT specimenId FROM Specimens WHERE medicalRecordNumber = ?", (mrn,))
-            specimen = cursor.fetchone()
+            # Adding Day Observations (for days 1 to 5)
+            for i in range(1, 6):
+                patient_data["day_observations"][f"Day {i}"] = self.get_day_observations(i)
 
-            if specimen:
-                cursor.execute('''
-                    UPDATE Specimens
-                    SET collectionDate = ?, collectionTime = ?, provider = ?, specimenType = ?
-                    WHERE medicalRecordNumber = ?
-                ''', (data_collected, time_collected, doctor, specimen_source, mrn))
-                print(f"Updated existing specimen with MRN: {mrn}")
-            else:
-                cursor.execute('''
-                    INSERT INTO Specimens (medicalRecordNumber, name, collectionDate, collectionTime, provider, specimenType)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                ''', (mrn, patient_name, data_collected, time_collected, doctor, specimen_source))
-                print(f"Inserted new specimen for MRN: {mrn}")
+            # Adding Final Observations
+            patient_data["final_observations"] = self.get_final_observations()
 
-            connection.commit()
-            connection.close()
-            print("Data saved successfully.")
-            self.main_screen.clear_frame()
-            self.main_screen.lookup()
+            # Adding Critical Results
+            patient_data["critical_results"] = self.get_critical_results()
+
+            print(patient_data)  # For debugging, you can print the gathered data
+
         except Exception as e:
             print(f"Error in save: {e}")
 
-    """
-    NOT FUNCTIONAL YET
-    """
     def populate_form(self, patient_data):
         try:
-            name, dob, mrn, gender = patient_data[:4]
+            name, dob, mrn, gender, collection_date, collection_time, diagnosis, provider, specimen_id = patient_data
 
             prefilled_fields = [
-                ("Patient Name:", name),
-                ("MRN:", mrn),
-                ("Sex:", gender),
-                ("Data Collected:", dob)
+                ("Patient Name", name),
+                ("Patient DOB", dob),
+                ("MRN", mrn),
+                ("Sex", gender),
+                ("Date Collected", collection_date),
+                ("Time Collected", collection_time),
+                ("Specimen Diagnosis", diagnosis),
+                ("Patient Doctor", provider)
             ]
 
             for field_label, value in prefilled_fields:
-                for widget in self.right_dashboard.winfo_children():
-                    if isinstance(widget, customtkinter.CTkEntry) and widget.placeholder_text == field_label:
-                        widget.insert(0, value)
-                        break
+                field_name = f"{field_label.replace(' ', '_').lower()}_entry"
+                entry_widget = getattr(self, field_name, None)
+                if entry_widget:
+                    entry_widget.delete(0, "end")
+                    entry_widget.insert(0, value)
+                    entry_widget.configure(state="disabled")
+
         except Exception as e:
             print(f"Error in populate_form for Work Card: {e}")

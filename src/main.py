@@ -7,7 +7,6 @@ from patientCreateFrame import PatientCreateFrame
 from barcode_frame import BarcodeFrame
 from work_card_frame import Work_Card_Frame
 from culture_notes import Culture_Notes
-import dbCalls
 
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -19,6 +18,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.current_user_id = None
+        self.current_patient_id = None
         self.title("Change Frames")
         #self.overrideredirect(True)
         self.focus_force()
@@ -167,7 +167,7 @@ class App(customtkinter.CTk):
 
         if user:
             self.current_user_id = user[0]
-            # print("Login Successful. Current User ID:", self.current_user_id) 
+            # print("Login Successful. Current User ID:", self.current_user_id)
             self.nmuIN_entry.delete(0, tkinter.END)
             self.show_main_screen()
         else:
@@ -226,22 +226,19 @@ class App(customtkinter.CTk):
         except Exception as e:
             print(f"Error in open_specimen_req: {e}")
 
-    def open_work_card(self, patient_data, patient_id):
+    def open_work_card(self, patient_data):
         try:
             self.clear_frame()
             self.workcard_frame = Work_Card_Frame(self)
             self.workcard_frame.build()
 
             if hasattr(self.workcard_frame, 'populate_form') and callable(self.workcard_frame.populate_form):
-                # print(f"Populating Work Card for patient ID: {patient_id}")
+                # print(f"Populating Work Card for patient ID: {patient_data}")
                 self.workcard_frame.populate_form(patient_data)
             else:
                 print("populate_form method is not defined or callable in Work_Card_Frame.")
         except Exception as e:
             print(f"Error in open_work_card: {e}")
-
-
-
 
 a = App()
 a.mainloop()
