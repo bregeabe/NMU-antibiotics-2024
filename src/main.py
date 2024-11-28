@@ -177,14 +177,18 @@ class App(customtkinter.CTk):
             self.signup_label.configure(text="User not found. Please sign up.")
 
     def lookup(self):
-        if hasattr(self, 'patient_frame') and self.patient_frame:
-            self.patient_frame.destroy()
+        self.clear_frame()
+        if hasattr(self, 'lookup_frame') and self.lookup_frame:
+            del self.lookup_frame
         self.lookup_frame = PatientLookUpFrame(self)
         self.lookup_frame.build()
 
     def create(self):
+        self.clear_frame()
+        if hasattr(self, 'create_specimen_frame') and self.create_specimen_frame:
+            del self.create_specimen_frame
+        self.create_specimen_frame = PatientCreateFrame(self)
         self.create_specimen_frame.build()
-
 
     def scanning(self):
         self.clear_frame()
@@ -193,6 +197,10 @@ class App(customtkinter.CTk):
         self.spec_req_frame.build()
 
     def workcard(self):
+        self.clear_frame()
+        if hasattr(self, 'work_card_frame') and self.workcard_frame:
+            del self.workcard_frame
+        self.workcard_frame = Work_Card_Frame(self)
         self.workcard_frame.build()
 
     def biochems(self):
