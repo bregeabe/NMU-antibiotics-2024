@@ -5,7 +5,6 @@ import dbCalls
 class Specimen_Requisition:
     def __init__(self, main_screen, patient_id=None):
         self.patient_id = patient_id
-        print(patient_id)
         self.main_screen = main_screen
         self.right_dashboard = main_screen.right_dashboard
         self.current_user_id = main_screen.current_user_id
@@ -181,18 +180,45 @@ class Specimen_Requisition:
                 WHERE UserPatients.patientId = ? AND UserPatients.userId = ?
             ''', (self.patient_id, self.current_user_id))
 
-            specimen_data = cursor.fetchone()
+            leftData = cursor.fetchone()
+
+            cursor.execute('''
+                SELECT receivedInLab, specimenAcceptable
+                FROM Specimens
+                JOIN PatientSpecimens ON Specimens.specimenId = PatientSpecimens.specimenId
+                JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
+                WHERE UserPatients.patientId = ? AND UserPatients.userId = ?
+            ''', (self.patient_id, self.current_user_id))
+            rightData = cursor.fetchone()
             connection.close()
 
-            if specimen_data:
-                print("Specimen data fetched:", specimen_data)
-                for i, value in enumerate(specimen_data, start=5):
+            if leftData:
+                print("Specimen data fetched:", leftData)
+                for i, value in enumerate(leftData, start=5):
+                    print(value)
+                    if value == 0:
+                        value = "No"
+                    if value == 1:
+                        value = "Yes"
                     entry_widget = self.left_spec_frame.grid_slaves(row=i, column=1)
                     if entry_widget:
                         entry_widget[0].delete(0, 'end')
                         entry_widget[0].insert(0, str(value) if value else "")
             else:
                 print("No specimen data found for this patient.")
+
+            if rightData:
+                print("Specimen data fetched:", rightData)
+                for i, value in enumerate(rightData, start=1):
+                    print(value)
+                    if value == 0:
+                        value = "No"
+                    if value == 1:
+                        value = "Yes"
+                    entry_widget = self.right_spec_frame.grid_slaves(row=i, column=1)
+                    if entry_widget:
+                        entry_widget[0].delete(0, 'end')
+                        entry_widget[0].insert(0, str(value) if value else "")
 
 
 

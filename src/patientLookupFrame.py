@@ -70,11 +70,26 @@ class PatientLookUpFrame:
         self.place_labels_frame()
 
     def get_work_card(self, patient_id):
-        patient_data = dbCalls.get_patient_data(patient_id)
-        if patient_data:
-            self.main_screen.open_work_card(patient_data, patient_id)
+        # Fetch the patient and their specimen data based on the selected patient_id
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+
+        db.execute('''
+            SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
+                Specimens.collectionDate, Specimens.collectionTime, Specimens.diagnosis, Specimens.provider,
+                Specimens.specimenId
+            FROM PatientSpecimens
+            JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
+            JOIN Patients ON UserPatients.patientId = Patients.patientId
+            JOIN Specimens ON PatientSpecimens.specimenId = Specimens.specimenId
+            WHERE Patients.patientId = ?
+        ''', (patient_id,))
+        patient_specimen_data = db.fetchone()
+
+        if patient_specimen_data:
+            self.main_screen.open_work_card(patient_specimen_data)
         else:
-            print(f"No patient data found for patient_id: {patient_id}")
+            print(f"No data found for patient_id: {patient_id}")
 
     def add_patient_row(self, patient, rowcount):
         temp_frame = customtkinter.CTkFrame(self.patient_frame, fg_color="#333333", height=50, corner_radius=0)
@@ -88,14 +103,14 @@ class PatientLookUpFrame:
             command=lambda p_id=patient[7]: self.on_create_specimen_req(p_id),
             font=self.patientFont,
             width=150
-        ).grid(column=4, row=0)
+        ).grid(column=4, row=0, padx=2)
         customtkinter.CTkButton(
             temp_frame,
             text="Work Card",
             command=lambda p_id=patient[7]: self.get_work_card(p_id),  # Pass the patient_id
             font=self.patientFont,
             width=150
-        ).grid(column=5, row=0)
+        ).grid(column=5, row=0, padx=2)
 
         temp_frame.grid(column=0, row=rowcount, sticky="ew", pady=5)
         temp_frame.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
