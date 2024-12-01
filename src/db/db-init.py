@@ -3,14 +3,18 @@ import sqlite3
 connection = sqlite3.connect('antibiotics.db')
 db = connection.cursor()
 
+# Drop old tables (if needed)
 db.execute('DROP TABLE IF EXISTS SimulatedBiochemInfo')
 db.execute('DROP TABLE IF EXISTS Specimens')
 db.execute('DROP TABLE IF EXISTS Patients')
 db.execute('DROP TABLE IF EXISTS Users')
 db.execute('DROP TABLE IF EXISTS UserPatients')
 db.execute('DROP TABLE IF EXISTS PatientSpecimens')
+db.execute('DROP TABLE IF EXISTS SpecimenRequisition')
+db.execute('DROP TABLE IF EXISTS WorkCard')
+db.execute('DROP TABLE IF EXISTS CultureNotes')
 
-
+# Recreate tables
 db.execute('''
 CREATE TABLE IF NOT EXISTS Patients (
     patientId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,57 +22,6 @@ CREATE TABLE IF NOT EXISTS Patients (
     name TEXT NOT NULL,
     dob DATE,
     gender TEXT NOT NULL
-);
-''')
-
-db.execute('''
-CREATE TABLE IF NOT EXISTS Specimens (
-    specimenId INTEGER PRIMARY KEY AUTOINCREMENT,
-    collectionDate DATE,
-    collectionTime TIME,
-    diagnosis TEXT,
-    provider TEXT,
-    receivingTherapy BOOL,
-    specimenType TEXT,
-    testOrdered TEXT,
-    receivedInLab TIME,
-    specimenAcceptable BOOL,
-    cultureId INT,
-    criticalResults TEXT,
-    dayOneInfo TEXT,
-    dayTwoInfo TEXT,
-    dayThreeInfo TEXT,
-    dayFourInfo TEXT,
-    dayFiveInfo TEXT,
-    dayFinalInfo TEXT,
-    dayOneDate DATE,
-    dayTwoDate DATE,
-    dayThreeDate DATE,
-    dayFourDate DATE,
-    dayFiveDate DATE,
-    dayFinalDate DATE,
-    dayOneTime TIME,
-    dayTwoTime TIME,
-    dayThreeTime TIME,
-    dayFourTime TIME,
-    dayFiveTime TIME,
-    dayFinalTime TIME,
-    colonyDescription TEXT,
-    biochemicalReactions TEXT,
-    simulatedBiochemId INT
-);
-''')
-
-db.execute('''
-CREATE TABLE IF NOT EXISTS SimulatedBiochemInfo (
-    biochemInfoId INTEGER PRIMARY KEY AUTOINCREMENT,
-    simulatedBiochemId INT,
-    test TEXT,
-    inoculation TEXT,
-    temperature INT,
-    duration TEXT,
-    atmosphericConditions TEXT,
-    FOREIGN KEY (simulatedBiochemId) REFERENCES Specimens(simulatedBiochemId)
 );
 ''')
 
@@ -92,18 +45,98 @@ CREATE TABLE IF NOT EXISTS UserPatients (
 ''')
 
 db.execute('''
-CREATE TABLE IF NOT EXISTS PatientSpecimens (
-    patientSpecimenId INTEGER PRIMARY KEY AUTOINCREMENT,
-    userPatientId INT,
-    specimenId INT,
-    FOREIGN KEY (userPatientId) REFERENCES UserPatient(userPatientId),
-    FOREIGN KEY (specimenId) REFERENCES Specimens(specimenId)
+CREATE TABLE IF NOT EXISTS SpecimenRequisition (
+    requisitionId INTEGER PRIMARY KEY AUTOINCREMENT,
+    userPatientId INTEGER NOT NULL UNIQUE,
+    provider TEXT,
+    diagnosis TEXT,
+    collectionDate DATE,
+    collectionTime TIME,
+    specimenType TEXT,
+    testOrdered TEXT,
+    receivingTherapy BOOL,
+    receivedInLab TIME,
+    specimenAcceptable BOOL,
+    FOREIGN KEY (userPatientId) REFERENCES UserPatients(userPatientId)
 );
 ''')
 
+db.execute('''
+CREATE TABLE IF NOT EXISTS WorkCard (
+    workCardId INTEGER PRIMARY KEY AUTOINCREMENT,
+    userPatientId INTEGER NOT NULL UNIQUE,
+    cultureId INT,
+    priority TEXT,
+    wbcQty TEXT,
+    epiQty TEXT,
+    gpcQty TEXT,
+    gpbQty TEXT,
+    gncQty TEXT,
+    gnbQty TEXT,
+    otherQty TEXT,
+    day1Observation TEXT,
+    day1Date TEXT,
+    day1Time TEXT,
+    day2Observation TEXT,
+    day2Date TEXT,
+    day2Time TEXT,
+    day3Observation TEXT,
+    day3Date TEXT,
+    day3Time TEXT,
+    day4Observation TEXT,
+    day4Date TEXT,
+    day4Time TEXT,
+    day5Observation TEXT,
+    day5Date TEXT,
+    day5Time TEXT,
+    finalObservation TEXT,
+    finalDate TEXT,
+    finalTime TEXT,
+    criticalResults TEXT,
+    FOREIGN KEY (userPatientId) REFERENCES UserPatients(userPatientId)
+);
+''')
 
+db.execute('''
+CREATE TABLE IF NOT EXISTS CultureNotes (
+    noteId INTEGER PRIMARY KEY AUTOINCREMENT,
+    userPatientId INTEGER NOT NULL UNIQUE,
+    cultureWorkup TEXT,
+    colonyDescription TEXT,
+    biochemicalReactions TEXT,
+    test1Name TEXT,
+    test1Inoculation TEXT,
+    test1Temperature INT,
+    test1Duration TEXT,
+    test1AtmosphericConditions TEXT,
+    test2Name TEXT,
+    test2Inoculation TEXT,
+    test2Temperature INT,
+    test2Duration TEXT,
+    test2AtmosphericConditions TEXT,
+    test3Name TEXT,
+    test3Inoculation TEXT,
+    test3Temperature INT,
+    test3Duration TEXT,
+    test3AtmosphericConditions TEXT,
+    test4Name TEXT,
+    test4Inoculation TEXT,
+    test4Temperature INT,
+    test4Duration TEXT,
+    test4AtmosphericConditions TEXT,
+    test5Name TEXT,
+    test5Inoculation TEXT,
+    test5Temperature INT,
+    test5Duration TEXT,
+    test5AtmosphericConditions TEXT,
+    test6Name TEXT,
+    test6Inoculation TEXT,
+    test6Temperature INT,
+    test6Duration TEXT,
+    test6AtmosphericConditions TEXT,
+    FOREIGN KEY (userPatientId) REFERENCES UserPatients(userPatientId)
+);
+''')
 
 connection.commit()
 connection.close()
-
-

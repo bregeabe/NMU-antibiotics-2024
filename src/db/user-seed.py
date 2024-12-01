@@ -16,10 +16,10 @@ for user in users_data:
     ''', (user["nmuIN"], user["firstName"], user["lastName"]))
 
 db.execute('''
-   INSERT INTO UserPatients (userId, patientId) Values (12345678901234, 1);
+   INSERT INTO UserPatients (userId, patientId) Values (1, 1);
 ''')
 db.execute('''
-    INSERT INTO UserPatients (userId, patientId) Values (23456789012345, 2);
+    INSERT INTO UserPatients (userId, patientId) Values (2, 2);
 ''')
 
 connection.commit()

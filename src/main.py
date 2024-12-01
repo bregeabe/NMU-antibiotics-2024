@@ -226,19 +226,38 @@ class App(customtkinter.CTk):
         except Exception as e:
             print(f"Error in open_specimen_req: {e}")
 
-    def open_work_card(self, patient_data):
+    def open_work_card(self, patient_data=None):
         try:
             self.clear_frame()
-            self.workcard_frame = Work_Card_Frame(self)
-            self.workcard_frame.build()
 
-            if hasattr(self.workcard_frame, 'populate_form') and callable(self.workcard_frame.populate_form):
-                # print(f"Populating Work Card for patient ID: {patient_data}")
+            # Use saved patient data if no data is explicitly passed
+            if not patient_data and hasattr(self, 'patient_data'):
+                patient_data = self.patient_data  # Fetch globally stored patient data
+
+            if patient_data:
+                self.workcard_frame = Work_Card_Frame(self)
+                self.workcard_frame.build()
                 self.workcard_frame.populate_form(patient_data)
             else:
-                print("populate_form method is not defined or callable in Work_Card_Frame.")
+                print("No patient data available to open Work Card.")
         except Exception as e:
             print(f"Error in open_work_card: {e}")
+
+
+    def open_culture_notes(self):
+        try:
+            self.clear_frame()
+            self.culture_notes_frame = Culture_Notes(self)
+            self.culture_notes_frame.build()
+
+            if hasattr(self.culture_notes_frame, 'populate_form') and callable(self.culture_notes_frame.populate_form):
+                self.culture_notes_frame.populate_form()
+            else:
+                print("populate_form method is not defined or callable in Culture_Notes.")
+        except Exception as e:
+            print(f"Error in open_culture_notes: {e}")
+
+
 
 a = App()
 a.mainloop()

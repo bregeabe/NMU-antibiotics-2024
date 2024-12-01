@@ -99,66 +99,59 @@ class Specimen_Requisition:
     def submit_action(self):
         connection = None
         try:
+            # Gather data
             provider = self.left_spec_frame.grid_slaves(row=5, column=1)[0].get()
             diagnosis = self.left_spec_frame.grid_slaves(row=6, column=1)[0].get()
             collection_date = self.left_spec_frame.grid_slaves(row=7, column=1)[0].get()
             collection_time = self.left_spec_frame.grid_slaves(row=8, column=1)[0].get()
             specimen_type = self.left_spec_frame.grid_slaves(row=9, column=1)[0].get()
             test_ordered = self.left_spec_frame.grid_slaves(row=10, column=1)[0].get()
-            receiving_therapy = self.left_spec_frame.grid_slaves(row=11, column=1)[0].get()
+            receiving_therapy = self.left_spec_frame.grid_slaves(row=11, column=1)[0].get().lower() == "yes"
             received_in_lab = self.right_spec_frame.grid_slaves(row=1, column=1)[0].get()
-            specimen_acceptable = self.right_spec_frame.grid_slaves(row=2, column=1)[0].get()
+            specimen_acceptable = self.right_spec_frame.grid_slaves(row=2, column=1)[0].get().lower() == "yes"
 
+            # Database connection
             connection = sqlite3.connect('antibiotics.db')
             cursor = connection.cursor()
 
+            # Get userPatientId
+            user_patient_id = dbCalls.get_user_patient_id(self)
+
+            # Upsert logic for SpecimenRequisition
             cursor.execute('''
-                SELECT specimenId
-                FROM PatientSpecimens
-                JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
-                WHERE UserPatients.patientId = ? AND UserPatients.userId = ?
-            ''', (self.patient_id, self.current_user_id))
-            existing_specimen = cursor.fetchone()
+                INSERT INTO SpecimenRequisition (
+                    userPatientId, provider, diagnosis, collectionDate, collectionTime,
+                    specimenType, testOrdered, receivingTherapy, receivedInLab, specimenAcceptable
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(userPatientId) DO UPDATE SET
+                    provider = excluded.provider,
+                    diagnosis = excluded.diagnosis,
+                    collectionDate = excluded.collectionDate,
+                    collectionTime = excluded.collectionTime,
+                    specimenType = excluded.specimenType,
+                    testOrdered = excluded.testOrdered,
+                    receivingTherapy = excluded.receivingTherapy,
+                    receivedInLab = excluded.receivedInLab,
+                    specimenAcceptable = excluded.specimenAcceptable
+            ''', (
+                user_patient_id, provider, diagnosis, collection_date, collection_time, 
+                specimen_type, test_ordered, receiving_therapy, received_in_lab, specimen_acceptable
+            ))
 
-            if existing_specimen:
-                specimen_id = existing_specimen[0]
-                cursor.execute('''
-                    UPDATE Specimens
-                    SET provider = ?, diagnosis = ?, collectionDate = ?, collectionTime = ?, specimenType = ?,
-                        testOrdered = ?, receivingTherapy = ?, receivedInLab = ?, specimenAcceptable = ?
-                    WHERE specimenId = ?
-                ''', (provider, diagnosis, collection_date, collection_time, specimen_type,
-                    test_ordered, receiving_therapy.lower() == "yes", received_in_lab,
-                    specimen_acceptable.lower() == "yes", specimen_id))
-                print(f"Updated existing specimen with ID: {specimen_id}")
-            else:
-                cursor.execute('''
-                    INSERT INTO Specimens (provider, diagnosis, collectionDate, collectionTime, specimenType, 
-                                        testOrdered, receivingTherapy, receivedInLab, specimenAcceptable)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (provider, diagnosis, collection_date, collection_time, specimen_type,
-                    test_ordered, receiving_therapy.lower() == "yes", received_in_lab, specimen_acceptable.lower() == "yes"))
-                connection.commit()
-                specimen_id = cursor.lastrowid
-
-                user_patient_id = dbCalls.get_user_patient_id(self)
-                cursor.execute('''
-                    INSERT INTO PatientSpecimens (userPatientId, specimenId)
-                    VALUES (?, ?)
-                ''', (user_patient_id, specimen_id))
-                print(f"Inserted new specimen with ID: {specimen_id}")
-
+            # Commit and close
             connection.commit()
-            print("Specimen data saved successfully.")
-
+            print("Specimen requisition data upserted successfully.")
             self.main_screen.clear_frame()
             self.main_screen.lookup()
-            print("Submitted. Data saved.")
+
         except Exception as e:
             print(f"Error in submit_action: {e}")
         finally:
             if connection:
                 connection.close()
+
+
 
     def populate_form(self, patient_data):
         if patient_data:
@@ -171,31 +164,21 @@ class Specimen_Requisition:
             connection = sqlite3.connect('antibiotics.db')
             cursor = connection.cursor()
 
+            # Fetch data from SpecimenRequisition
             cursor.execute('''
                 SELECT provider, diagnosis, collectionDate, collectionTime, specimenType, testOrdered,
                     receivingTherapy, receivedInLab, specimenAcceptable
-                FROM Specimens
-                JOIN PatientSpecimens ON Specimens.specimenId = PatientSpecimens.specimenId
-                JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
+                FROM SpecimenRequisition
+                JOIN UserPatients ON SpecimenRequisition.userPatientId = UserPatients.userPatientId
                 WHERE UserPatients.patientId = ? AND UserPatients.userId = ?
             ''', (self.patient_id, self.current_user_id))
 
-            leftData = cursor.fetchone()
-
-            cursor.execute('''
-                SELECT receivedInLab, specimenAcceptable
-                FROM Specimens
-                JOIN PatientSpecimens ON Specimens.specimenId = PatientSpecimens.specimenId
-                JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
-                WHERE UserPatients.patientId = ? AND UserPatients.userId = ?
-            ''', (self.patient_id, self.current_user_id))
-            rightData = cursor.fetchone()
+            specimen_data = cursor.fetchone()
             connection.close()
 
-            if leftData:
-                print("Specimen data fetched:", leftData)
-                for i, value in enumerate(leftData, start=5):
-                    print(value)
+            if specimen_data:
+                print("Specimen requisition data fetched:", specimen_data)
+                for i, value in enumerate(specimen_data, start=5):
                     if value == 0:
                         value = "No"
                     if value == 1:
@@ -205,20 +188,8 @@ class Specimen_Requisition:
                         entry_widget[0].delete(0, 'end')
                         entry_widget[0].insert(0, str(value) if value else "")
             else:
-                print("No specimen data found for this patient.")
+                print("No specimen requisition data found for this patient.")
 
-            if rightData:
-                print("Specimen data fetched:", rightData)
-                for i, value in enumerate(rightData, start=1):
-                    print(value)
-                    if value == 0:
-                        value = "No"
-                    if value == 1:
-                        value = "Yes"
-                    entry_widget = self.right_spec_frame.grid_slaves(row=i, column=1)
-                    if entry_widget:
-                        entry_widget[0].delete(0, 'end')
-                        entry_widget[0].insert(0, str(value) if value else "")
 
 
 
