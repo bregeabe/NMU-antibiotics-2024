@@ -75,14 +75,13 @@ class PatientLookUpFrame:
         db = connection.cursor()
 
         db.execute('''
-            SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
-                Specimens.collectionDate, Specimens.collectionTime, Specimens.diagnosis, Specimens.provider,
-                Specimens.specimenId
-            FROM PatientSpecimens
-            JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
-            JOIN Patients ON UserPatients.patientId = Patients.patientId
-            JOIN Specimens ON PatientSpecimens.specimenId = Specimens.specimenId
-            WHERE Patients.patientId = ?
+                SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
+                    SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime, 
+                    SpecimenRequisition.diagnosis, SpecimenRequisition.provider
+                FROM UserPatients
+                JOIN Patients ON UserPatients.patientId = Patients.patientId
+                JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
+                WHERE Patients.patientId = ?
         ''', (patient_id,))
         patient_specimen_data = db.fetchone()
 
@@ -126,13 +125,14 @@ class PatientLookUpFrame:
         db = connection.cursor()
         # patients = dbCalls.getPatientAndSpecimenDataByUserID(self.current_user)
         db.execute('''
-            SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
-                Specimens.collectionDate, Specimens.collectionTime, Specimens.diagnosis, Patients.patientId
-            FROM PatientSpecimens
-            JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
-            JOIN Patients ON UserPatients.patientId = Patients.patientId
-            JOIN Specimens ON PatientSpecimens.specimenId = Specimens.specimenId
-            WHERE UserPatients.userId = ?
+                SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
+                    SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime, 
+                    SpecimenRequisition.diagnosis, Patients.patientId
+                FROM UserPatients
+                JOIN Patients ON UserPatients.patientId = Patients.patientId
+                JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
+                WHERE UserPatients.userId = ?
+
         ''', (self.current_user,))
         patients = db.fetchall()
         for rowcount, patient in enumerate(patients, 1):
@@ -158,12 +158,13 @@ class PatientLookUpFrame:
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
         query = '''SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
-            Specimens.collectionDate, Specimens.collectionTime, Specimens.diagnosis, Patients.patientId
-            FROM PatientSpecimens
-            JOIN UserPatients ON PatientSpecimens.userPatientId = UserPatients.userPatientId
-            JOIN Patients ON UserPatients.patientId = Patients.patientId
-            JOIN Specimens ON PatientSpecimens.specimenId = Specimens.specimenId 
-            WHERE UserPatients.userId = ? AND (name LIKE ? OR mrn LIKE ? OR dob LIKE ?)'''
+                SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime, 
+                SpecimenRequisition.diagnosis, Patients.patientId
+                    FROM UserPatients
+                    JOIN Patients ON UserPatients.patientId = Patients.patientId
+                    JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
+                    WHERE UserPatients.userId = ? AND (Patients.name LIKE ? OR Patients.mrn LIKE ? OR Patients.dob LIKE ?)
+                    '''
         patients = db.execute(query, (self.current_user, f"%{entry}%", f"%{entry}%", f"%{entry}%")).fetchall()
         connection.close()
 

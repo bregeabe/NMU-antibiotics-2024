@@ -1,4 +1,6 @@
 import customtkinter
+import sqlite3
+import dbCalls
 
 class Culture_Notes:
     def __init__(self, main_screen):
@@ -7,19 +9,22 @@ class Culture_Notes:
 
         self.mainFont = customtkinter.CTkFont(size=16)
         self.headerFont = customtkinter.CTkFont(size=18, weight="bold")
+        self.current_user = main_screen.current_user_id
+        self.current_patient_data = dbCalls.get_patient_data(self.current_user)
+        print(self.current_patient_data)
 
     def build(self):
         self.main_screen.clear_frame()
-        
+
         self.right_dashboard.grid_columnconfigure(0, weight=1)
         self.create_title()
-        
+
         self.biochem_frame = customtkinter.CTkFrame(self.right_dashboard)
         self.biochem_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
-        
+
         for col in range(3):
             self.biochem_frame.grid_columnconfigure(col, weight=1)
-        
+
         self.create_notes()
         self.create_buttons()
 
@@ -113,8 +118,145 @@ class Culture_Notes:
 
     def cancel(self):
         self.main_screen.clear_frame()
-        self.main_screen.workcard()
+        self.main_screen.open_work_card(self.current_patient_data)
 
     def save(self):
-        self.main_screen.clear_frame()
-        self.main_screen.workcard()
+        try:
+            culture_workup = self.culture_entry.get("1.0", "end").strip()
+            colony_desc = self.colony_entry.get("1.0", "end").strip()
+            biochem_reactions = self.reactions_entry.get("1.0", "end").strip()
+
+            biochem_tests = []
+            for i in range(6):
+                test_frame = self.biochem_frame.grid_slaves(row=i // 3 + 1, column=i % 3)[0]
+                test_name = test_frame.grid_slaves(row=1, column=1)[0].get().strip()
+                inoculation = test_frame.grid_slaves(row=2, column=1)[0].get().strip()
+                temperature = test_frame.grid_slaves(row=3, column=1)[0].get().strip()
+                duration = test_frame.grid_slaves(row=4, column=1)[0].get().strip()
+                atmospheric_conditions = test_frame.grid_slaves(row=5, column=1)[0].get().strip()
+                biochem_tests.append((test_name, inoculation, temperature, duration, atmospheric_conditions))
+
+            connection = sqlite3.connect("antibiotics.db")
+            cursor = connection.cursor()
+
+            query = '''
+                INSERT INTO CultureNotes (
+                    userPatientId, cultureWorkup, colonyDescription, biochemicalReactions,
+                    test1Name, test1Inoculation, test1Temperature, test1Duration, test1AtmosphericConditions,
+                    test2Name, test2Inoculation, test2Temperature, test2Duration, test2AtmosphericConditions,
+                    test3Name, test3Inoculation, test3Temperature, test3Duration, test3AtmosphericConditions,
+                    test4Name, test4Inoculation, test4Temperature, test4Duration, test4AtmosphericConditions,
+                    test5Name, test5Inoculation, test5Temperature, test5Duration, test5AtmosphericConditions,
+                    test6Name, test6Inoculation, test6Temperature, test6Duration, test6AtmosphericConditions
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(userPatientId) DO UPDATE SET
+                    cultureWorkup = excluded.cultureWorkup,
+                    colonyDescription = excluded.colonyDescription,
+                    biochemicalReactions = excluded.biochemicalReactions,
+                    test1Name = excluded.test1Name, test1Inoculation = excluded.test1Inoculation,
+                    test1Temperature = excluded.test1Temperature, test1Duration = excluded.test1Duration,
+                    test1AtmosphericConditions = excluded.test1AtmosphericConditions,
+                    test2Name = excluded.test2Name, test2Inoculation = excluded.test2Inoculation,
+                    test2Temperature = excluded.test2Temperature, test2Duration = excluded.test2Duration,
+                    test2AtmosphericConditions = excluded.test2AtmosphericConditions,
+                    test3Name = excluded.test3Name, test3Inoculation = excluded.test3Inoculation,
+                    test3Temperature = excluded.test3Temperature, test3Duration = excluded.test3Duration,
+                    test3AtmosphericConditions = excluded.test3AtmosphericConditions,
+                    test4Name = excluded.test4Name, test4Inoculation = excluded.test4Inoculation,
+                    test4Temperature = excluded.test4Temperature, test4Duration = excluded.test4Duration,
+                    test4AtmosphericConditions = excluded.test4AtmosphericConditions,
+                    test5Name = excluded.test5Name, test5Inoculation = excluded.test5Inoculation,
+                    test5Temperature = excluded.test5Temperature, test5Duration = excluded.test5Duration,
+                    test5AtmosphericConditions = excluded.test5AtmosphericConditions,
+                    test6Name = excluded.test6Name, test6Inoculation = excluded.test6Inoculation,
+                    test6Temperature = excluded.test6Temperature, test6Duration = excluded.test6Duration,
+                    test6AtmosphericConditions = excluded.test6AtmosphericConditions
+            '''
+
+            # Flatten biochem_tests data and insert into database
+            cursor.execute(query, (self.main_screen.current_user_id, culture_workup, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test]))
+
+            # Commit and close
+            connection.commit()
+            print("Culture Notes data upserted successfully.")
+            self.main_screen.clear_frame()
+            self.main_screen.open_work_card(self.current_patient_data)
+
+        except Exception as e:
+            print(f"Error in save: {e}")
+        finally:
+            if connection:
+                connection.close()
+
+
+    def populate_form(self):
+        try:
+            connection = sqlite3.connect("antibiotics.db")
+            cursor = connection.cursor()
+
+            # Query data for the current user
+            query = '''
+                SELECT *
+                FROM CultureNotes
+                WHERE userPatientId = ?
+            '''
+            cursor.execute(query, (self.current_user,))
+            record = cursor.fetchone()
+
+            if not record:
+                print("No data found for the current user.")
+                return
+
+            # Map database columns to record values
+            column_names = [
+                "noteId", "userPatientId", "cultureWorkup", "colonyDescription", "biochemicalReactions",
+                "test1Name", "test1Inoculation", "test1Temperature", "test1Duration", "test1AtmosphericConditions",
+                "test2Name", "test2Inoculation", "test2Temperature", "test2Duration", "test2AtmosphericConditions",
+                "test3Name", "test3Inoculation", "test3Temperature", "test3Duration", "test3AtmosphericConditions",
+                "test4Name", "test4Inoculation", "test4Temperature", "test4Duration", "test4AtmosphericConditions",
+                "test5Name", "test5Inoculation", "test5Temperature", "test5Duration", "test5AtmosphericConditions",
+                "test6Name", "test6Inoculation", "test6Temperature", "test6Duration", "test6AtmosphericConditions"
+            ]
+            culture_notes_data = dict(zip(column_names, record))
+
+            # Populate Culture Workup, Colony Description, and Biochemical Reactions
+            self.culture_entry.delete("1.0", "end")
+            self.culture_entry.insert("1.0", culture_notes_data.get("cultureWorkup", ""))
+
+            self.colony_entry.delete("1.0", "end")
+            self.colony_entry.insert("1.0", culture_notes_data.get("colonyDescription", ""))
+
+            self.reactions_entry.delete("1.0", "end")
+            self.reactions_entry.insert("1.0", culture_notes_data.get("biochemicalReactions", ""))
+
+            # Populate Biochemical Test fields
+            for i in range(6):
+                # Calculate the row and column for the test frame
+                row, col = divmod(i, 3)
+                test_frame = self.biochem_frame.grid_slaves(row=row + 1, column=col)[0]
+
+                # Get corresponding field names from the database
+                test_fields = {
+                    1: f"test{i+1}Name",
+                    2: f"test{i+1}Inoculation",
+                    3: f"test{i+1}Temperature",
+                    4: f"test{i+1}Duration",
+                    5: f"test{i+1}AtmosphericConditions",
+                }
+
+                # Populate each field in the test frame
+                for j, db_column in test_fields.items():
+                    widget = test_frame.grid_slaves(row=j, column=1)[0]  # Accessing the second column in the frame
+                    if widget and isinstance(widget, customtkinter.CTkEntry):
+                        widget.delete(0, "end")
+                        widget.insert(0, culture_notes_data.get(db_column, ""))
+
+            print("Form populated successfully with Culture Notes data.")
+
+        except Exception as e:
+            print(f"Error in populate_form for Culture Notes: {e}")
+
+        finally:
+            if connection:
+                connection.close()
