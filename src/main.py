@@ -7,6 +7,8 @@ from patientCreateFrame import PatientCreateFrame
 from barcode_frame import BarcodeFrame
 from work_card_frame import Work_Card_Frame
 from culture_notes import Culture_Notes
+from user_frame import Users_Frame
+import dbCalls
 
 DARK_MODE = "dark"
 customtkinter.set_appearance_mode(DARK_MODE)
@@ -98,6 +100,10 @@ class App(customtkinter.CTk):
 
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Simulated Biochems", command=self.biochems)
         self.bt_categories.grid(row=6, column=0, padx=20, pady=10)
+
+        #if user is admin:
+        self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Users", command=self.users)
+        self.bt_categories.grid(row=7, column=0, padx=20, pady=10)
 
         self.bt_Quit = customtkinter.CTkButton(self.left_side_panel, text="Change User", fg_color= '#EA0000', hover_color = '#B20000', command=self.show_login_screen)
         self.bt_Quit.grid(row=9, column=0, padx=20, pady=10)
@@ -206,6 +212,13 @@ class App(customtkinter.CTk):
     def biochems(self):
         self.culture_frame.build()
 
+    def users(self):
+        self.clear_frame()
+        if hasattr(self, 'users_frame') and self.users:
+            del self.users_frame
+        self.users_frame = Users_Frame(self)
+        self.users_frame.build()
+
     def close_window(self):
         App.destroy(self)
 
@@ -243,19 +256,14 @@ class App(customtkinter.CTk):
         except Exception as e:
             print(f"Error in open_work_card: {e}")
 
+    def view_as(self, nmu_in):
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+        db.execute("SELECT userId FROM Users WHERE nmuIN = ?", (nmu_in,))
+        user = db.fetchone()
+        self.current_user_id = user[0]
+        self.lookup()
 
-    def open_culture_notes(self):
-        try:
-            self.clear_frame()
-            self.culture_notes_frame = Culture_Notes(self)
-            self.culture_notes_frame.build()
-
-            if hasattr(self.culture_notes_frame, 'populate_form') and callable(self.culture_notes_frame.populate_form):
-                self.culture_notes_frame.populate_form()
-            else:
-                print("populate_form method is not defined or callable in Culture_Notes.")
-        except Exception as e:
-            print(f"Error in open_culture_notes: {e}")
 
 
 

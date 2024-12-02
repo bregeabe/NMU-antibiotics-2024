@@ -93,3 +93,9 @@ def get_user_patient_id(self):
 
     connection.close()
     return user_patient_id
+
+def getAllUsers(db):
+    db.execute('SELECT * FROM Users')
+    users = db.fetchall()
+    connection.close()
+    return users
