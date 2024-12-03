@@ -191,51 +191,12 @@ class Work_Card_Frame:
 
         critical_results_entry = customtkinter.CTkTextbox(critical_results_frame, height=60)
         critical_results_entry.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
-        self.placeholders["critical_results"] = critical_results_entry  # Add to placeholders
-
-
-    def get_gram_stain_value(self, option):
-        gram_stain_values = {
-            "WBC": self.placeholders.get("WBC"),
-            "EPI": self.placeholders.get("EPI"),
-            "GPC": self.placeholders.get("GPC"),
-            "GPB": self.placeholders.get("GPB"),
-            "GNC": self.placeholders.get("GNC"),
-            "GNB": self.placeholders.get("GNB"),
-            "Other": self.placeholders.get("Other")
-        }
-        return gram_stain_values.get(option, None).get() if gram_stain_values.get(option) else None
-
-    def get_date_and_time(self, day_number):
-        date_key = f"day{day_number}Date"
-        time_key = f"day{day_number}Time"
-
-        date_entry = self.placeholders.get(date_key)
-        time_entry = self.placeholders.get(time_key)
-
-        date_value = date_entry.get() if date_entry else None
-        time_value = time_entry.get() if time_entry else None
-
-        return date_value, time_value
-    
-    def get_day_observations(self, day_number):
-        day_key = f"day{day_number}Observations"
-        day_entry = self.placeholders.get(day_key)
-        return day_entry.get() if day_entry else None
-
-    def get_final_observations(self):
-        final_entry = self.placeholders.get("final_observations")
-        return final_entry.get() if final_entry else None
-
-    def get_critical_results(self):
-        critical_results_entry = self.placeholders.get("critical_results")
-        return critical_results_entry.get() if critical_results_entry else None
+        self.placeholders["criticalResults"] = critical_results_entry
 
     def go_to_culture_notes(self):
-        # Fetch full patient data (8 fields) before navigating to Culture Notes
-        patient_data = dbCalls.get_patient_data(self.current_user)  # Use current_user ID to fetch
+        patient_data = dbCalls.get_patient_data(self.current_user)
         if patient_data:
-            self.main_screen.patient_data = patient_data  # Save patient data globally in main_screen
+            self.main_screen.patient_data = patient_data
             self.main_screen.open_culture_notes()
         else:
             print("Unable to fetch patient data for Culture Notes.")
@@ -246,7 +207,6 @@ class Work_Card_Frame:
         button_frame = customtkinter.CTkFrame(non_prefilled_frame)
         button_frame.grid(row=4, column=0, columnspan=8, padx=10, pady=10, sticky="ew")
 
-        # Configure middle columns to take up the extra space
         for col in range(2, 6):
             button_frame.grid_columnconfigure(col, weight=1)
 
@@ -306,8 +266,9 @@ class Work_Card_Frame:
             data["finalTime"] = self.placeholders["day6Time"].get().strip()
 
             # Save critical results
-            critical_results_widget = self.placeholders.get("critical_results")
+            critical_results_widget = self.placeholders.get("criticalResults")
             if critical_results_widget:
+                print(critical_results_widget.get("1.0", "end").strip())
                 data["criticalResults"] = critical_results_widget.get("1.0", "end").strip()
             else:
                 data["criticalResults"] = ""
@@ -404,6 +365,7 @@ class Work_Card_Frame:
             workcard_data = dict(zip(column_names, record))
 
             for key, value in workcard_data.items():
+                print(key)
                 if key in self.placeholders:
                     entry_widget = self.placeholders[key]
                     if isinstance(entry_widget, customtkinter.CTkEntry):
