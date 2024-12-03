@@ -1,8 +1,7 @@
-## Initial README
-blah blah blah blah blah blah
+# Antibiotics System - Northern Michigan University
 
-
-for new branch: ``` git checkout -b new-branch-name ``` <br><br>
-to navigate to existing branch: ``` git checkout branch-name ``` <br><br>
-to save: ``` git stash ``` <br><br>
-to pull saved: ``` git stash pop (number if you know it) ```<br><br>
+## Setup
+1. navigate to parent directory of github repo
+2. from parent directory, run
+```python3 Antibiotics/src/db/rebuild.py```
+from terminal
