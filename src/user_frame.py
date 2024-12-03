@@ -18,8 +18,9 @@ class Users_Frame:
     def build_labels_frame(self):
         aFont = customtkinter.CTkFont(size=18)
         self.labels_frame = customtkinter.CTkFrame(self.patient_frame, height=50, corner_radius=0, fg_color="#333333")
-        self.first_name_label = customtkinter.CTkLabel(self.labels_frame, text="First name", font=aFont, width=200)
-        self.last_name_label = customtkinter.CTkLabel(self.labels_frame, text="Last name", font=aFont, width=160)
+        self.first_name_label = customtkinter.CTkLabel(self.labels_frame, text="First name", font=aFont, width=150)
+        self.last_name_label = customtkinter.CTkLabel(self.labels_frame, text="Last name", font=aFont, width=150)
+        self.viewed_label = customtkinter.CTkLabel(self.labels_frame, text="Viewed", font=aFont, width=90)
         self.create_label = customtkinter.CTkLabel(self.labels_frame, text="View as user", font=aFont, width=150)
 
     def place_search_frame(self):
@@ -32,9 +33,10 @@ class Users_Frame:
         self.labels_frame.grid(row=0, column=0, sticky="ew")
         self.first_name_label.grid(row=0,column=0)
         self.last_name_label.grid(row=0,column=1)
-        self.create_label.grid(row=0,column=4)
+        self.viewed_label.grid(row=0,column=2)
+        self.create_label.grid(row=0,column=3)
 
-        self.labels_frame.grid_columnconfigure((0,1,2,3,4), weight=1)
+        self.labels_frame.grid_columnconfigure((0,1,2,3), weight=1)
         self.labels_frame.grid_rowconfigure((0), weight=1)
 
     def build_frames(self):
@@ -55,11 +57,12 @@ class Users_Frame:
     # Creates the new user row, put in a method for reusing in search
     def add_user_row(self, user, rowcount):
         temp_frame = customtkinter.CTkFrame(self.patient_frame, height=50, corner_radius=0, fg_color="#333333")
-        customtkinter.CTkLabel(temp_frame, text=user[2], font=self.mainFont, width=200).grid(column=0, row=0)
+        customtkinter.CTkLabel(temp_frame, text=user[2], font=self.mainFont, width=150).grid(column=0, row=0)
         customtkinter.CTkLabel(temp_frame, text=user[3], font=self.mainFont, width=150).grid(column=1, row=0)
-        customtkinter.CTkButton(temp_frame, text="View as", command=lambda user=user[1] : self.main_screen.view_as(user), font=self.mainFont, width=150).grid(column=4, row=0)
+        customtkinter.CTkCheckBox(temp_frame, text="Viewed", font=self.mainFont, width=90).grid(column=2,row=0)
+        customtkinter.CTkButton(temp_frame, text="View as", command=lambda user=user[1] : self.main_screen.view_as(user), font=self.mainFont, width=150).grid(column=3, row=0)
         temp_frame.grid(column=0,row=rowcount,sticky="ew", pady=5)
-        temp_frame.grid_columnconfigure((0,1,2,3,4), weight=1)
+        temp_frame.grid_columnconfigure((0,1,2,3), weight=1)
 
     def build(self):
         self.main_screen.clear_frame()
