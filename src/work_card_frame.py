@@ -61,8 +61,7 @@ class Work_Card_Frame:
 
             field_entry = customtkinter.CTkEntry(prefilled_frame, placeholder_text=placeholder)
             field_entry.grid(row=row * 2 + 1, column=col, padx=(5, 10), pady=2, sticky="ew")
-            
-            # Store the entry in placeholders
+
             self.placeholders[label] = field_entry
 
 
@@ -99,20 +98,41 @@ class Work_Card_Frame:
         gram_stain_frame.grid(row=1, column=0, columnspan=8, padx=10, pady=10, sticky="ew")
 
         gram_stain_label = customtkinter.CTkLabel(gram_stain_frame, text="Direct Gram Stain: ", font=self.mainFont)
-        gram_stain_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w")
+        gram_stain_label.grid(row=0, column=0, columnspan=8, padx=5, pady=5, sticky="w")
 
-        gram_stain_options = ["WBC", "EPI", "GPC", "GPB", "GNC", "GNB", "Other"]
+        gram_stain_options = ["None Seen", "1+", "2+", "3+", "4+"]
+        free_text_option = "Other"
 
-        for col in range(len(gram_stain_options) * 2):  # Multiply by 2 for label-entry pairs
+        # Configure columns to allow for uniform expansion
+        for col in range(8):
             gram_stain_frame.grid_columnconfigure(col, weight=1, uniform="stain")
 
-        for i, option in enumerate(gram_stain_options):
-            label = customtkinter.CTkLabel(gram_stain_frame, text=option, font=self.mainFont)
-            label.grid(row=0, column=(i * 2)+1, padx=(5, 2), pady=2, sticky="e")
+        # First row of fields
+        first_row_fields = ["WBC", "EPI", "GPC"]
+        for i, field in enumerate(first_row_fields):
+            label = customtkinter.CTkLabel(gram_stain_frame, text=field, font=self.mainFont)
+            label.grid(row=1, column=i * 2, padx=(10, 5), pady=5, sticky="e")
 
-            entry = customtkinter.CTkEntry(gram_stain_frame, width=40, placeholder_text="Qty")
-            entry.grid(row=0, column=(i * 2) + 2, padx=(2, 10), pady=2, sticky="w")
-            self.placeholders[option] = entry  # Add to placeholders
+            dropdown = customtkinter.CTkOptionMenu(gram_stain_frame, values=gram_stain_options, width=100)
+            dropdown.grid(row=1, column=(i * 2) + 1, padx=(5, 10), pady=5, sticky="w")
+            self.placeholders[field] = dropdown
+
+        # Second row of fields
+        second_row_fields = ["GPB", "GNC", "GNB", free_text_option]
+        for i, field in enumerate(second_row_fields):
+            label = customtkinter.CTkLabel(gram_stain_frame, text=field, font=self.mainFont)
+            label.grid(row=2, column=i * 2, padx=(10, 5), pady=5, sticky="e")
+
+            if field == free_text_option:
+                # Free-text field for "Other" with larger column span
+                entry = customtkinter.CTkEntry(gram_stain_frame, placeholder_text="Qty")
+                entry.grid(row=2, column=(i * 2) + 1, columnspan=2, padx=(5, 10), pady=5, sticky="ew")
+                self.placeholders[field] = entry
+            else:
+                # Dropdown for predefined options
+                dropdown = customtkinter.CTkOptionMenu(gram_stain_frame, values=gram_stain_options, width=100)
+                dropdown.grid(row=2, column=(i * 2) + 1, padx=(5, 10), pady=5, sticky="w")
+                self.placeholders[field] = dropdown
 
 
     def create_date_and_time(self, culture_readout_frame, i):
@@ -265,29 +285,34 @@ class Work_Card_Frame:
             data["cultureId"] = self.placeholders["Culture ID"].get().strip()
             data["priority"] = self.placeholders["Priority"].get().strip()
 
-            gram_stain_options = ["WBC", "EPI", "GPC", "GPB", "GNC", "GNB", "Other"]
-            for option in gram_stain_options:
-                entry_widget = self.placeholders.get(option)
-                if entry_widget:
-                    data[f"{option.lower()}Qty"] = entry_widget.get().strip()
-                else:
-                    data[f"{option.lower()}Qty"] = ""
+            # Save gram stain fields, including "GNB" and "Other"
+            gram_stain_fields = ["WBC", "EPI", "GPC", "GPB", "GNC", "GNB", "Other"]
+            for field in gram_stain_fields:
+                entry_widget = self.placeholders.get(field)
+                if isinstance(entry_widget, customtkinter.CTkOptionMenu):
+                    data[f"{field.lower()}Qty"] = entry_widget.get().strip()
+                elif isinstance(entry_widget, customtkinter.CTkEntry):
+                    data[f"{field.lower()}Qty"] = entry_widget.get().strip()
 
+            # Save culture readout fields
             for i in range(1, 6):
                 data[f"day{i}Observation"] = self.placeholders[f"day{i}Observation"].get().strip()
                 data[f"day{i}Date"] = self.placeholders[f"day{i}Date"].get().strip()
                 data[f"day{i}Time"] = self.placeholders[f"day{i}Time"].get().strip()
 
+            # Save final observation
             data["finalObservation"] = self.placeholders["finalObservation"].get().strip()
             data["finalDate"] = self.placeholders["day6Date"].get().strip()
             data["finalTime"] = self.placeholders["day6Time"].get().strip()
 
+            # Save critical results
             critical_results_widget = self.placeholders.get("critical_results")
             if critical_results_widget:
                 data["criticalResults"] = critical_results_widget.get("1.0", "end").strip()
             else:
                 data["criticalResults"] = ""
 
+            # Save data into the database
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
 
@@ -393,17 +418,6 @@ class Work_Card_Frame:
                         # For dropdowns (e.g., priority)
                         entry_widget.set(value if value else "")
 
-            if "cultureId" in workcard_data:
-                culture_id_widget = self.placeholders.get("Culture ID")
-                if culture_id_widget:
-                    culture_id_widget.delete(0, "end")
-                    culture_id_widget.insert(0, workcard_data["cultureId"])
-
-            if "priority" in workcard_data:
-                priority_widget = self.placeholders.get("Priority")
-                if priority_widget:
-                    priority_widget.set(workcard_data["priority"])
-
             gram_stain_fields = {
                 "WBC": "wbcQty",
                 "EPI": "epiQty",
@@ -416,8 +430,11 @@ class Work_Card_Frame:
             for field, column in gram_stain_fields.items():
                 widget = self.placeholders.get(field)
                 if widget and column in workcard_data:
-                    widget.delete(0, "end")
-                    widget.insert(0, workcard_data[column])
+                    if isinstance(widget, customtkinter.CTkOptionMenu):
+                        widget.set(workcard_data[column])
+                    elif isinstance(widget, customtkinter.CTkEntry):
+                        widget.delete(0, "end")
+                        widget.insert(0, workcard_data[column])
 
         except Exception as e:
             print(f"Error in populate_form for Work Card: {e}")
@@ -425,9 +442,3 @@ class Work_Card_Frame:
         finally:
             if connection:
                 connection.close()
-
-
-
-
-
-

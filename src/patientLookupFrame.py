@@ -126,7 +126,7 @@ class PatientLookUpFrame:
         # patients = dbCalls.getPatientAndSpecimenDataByUserID(self.current_user)
         db.execute('''
                 SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
-                    SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime, 
+                    SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime,
                     SpecimenRequisition.diagnosis, Patients.patientId
                 FROM UserPatients
                 JOIN Patients ON UserPatients.patientId = Patients.patientId
