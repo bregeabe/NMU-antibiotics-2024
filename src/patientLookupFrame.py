@@ -6,7 +6,7 @@ class PatientLookUpFrame:
     def __init__(self, main_screen):
         self.main_screen = main_screen
         self.right_dashboard = main_screen.right_dashboard
-        self.current_user = main_screen.current_user_id
+        self.current_user_id = main_screen.current_user_id
 
 
         self.patientFont = customtkinter.CTkFont(size=16)
@@ -74,15 +74,17 @@ class PatientLookUpFrame:
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
 
+        user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
+
         db.execute('''
-                SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
-                    SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime, 
-                    SpecimenRequisition.diagnosis, SpecimenRequisition.provider
-                FROM UserPatients
-                JOIN Patients ON UserPatients.patientId = Patients.patientId
-                JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
-                WHERE Patients.patientId = ?
-        ''', (patient_id,))
+            SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
+                SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime,
+                SpecimenRequisition.diagnosis, SpecimenRequisition.provider
+            FROM UserPatients
+            JOIN Patients ON UserPatients.patientId = Patients.patientId
+            JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
+            WHERE UserPatients.userPatientId = ?
+        ''', (user_patient_id,))
         patient_specimen_data = db.fetchone()
 
         if patient_specimen_data:
@@ -106,7 +108,7 @@ class PatientLookUpFrame:
         customtkinter.CTkButton(
             temp_frame,
             text="Work Card",
-            command=lambda p_id=patient[7]: self.get_work_card(p_id),  # Pass the patient_id
+            command=lambda p_id=patient[7]: self.get_work_card(p_id),
             font=self.patientFont,
             width=150
         ).grid(column=5, row=0, padx=2)
@@ -123,7 +125,7 @@ class PatientLookUpFrame:
 
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
-        # patients = dbCalls.getPatientAndSpecimenDataByUserID(self.current_user)
+        # patients = dbCalls.getPatientAndSpecimenDataByUserID(self.current_user_id)
         db.execute('''
                 SELECT Patients.name, Patients.dob, Patients.mrn, Patients.gender,
                     SpecimenRequisition.collectionDate, SpecimenRequisition.collectionTime,
@@ -133,7 +135,7 @@ class PatientLookUpFrame:
                 JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
                 WHERE UserPatients.userId = ?
 
-        ''', (self.current_user,))
+        ''', (self.current_user_id,))
         patients = db.fetchall()
         for rowcount, patient in enumerate(patients, 1):
             self.add_patient_row(patient, rowcount)
@@ -165,7 +167,7 @@ class PatientLookUpFrame:
                     JOIN SpecimenRequisition ON UserPatients.userPatientId = SpecimenRequisition.userPatientId
                     WHERE UserPatients.userId = ? AND (Patients.name LIKE ? OR Patients.mrn LIKE ? OR Patients.dob LIKE ?)
                     '''
-        patients = db.execute(query, (self.current_user, f"%{entry}%", f"%{entry}%", f"%{entry}%")).fetchall()
+        patients = db.execute(query, (self.current_user_id, f"%{entry}%", f"%{entry}%", f"%{entry}%")).fetchall()
         connection.close()
 
         #if anything was found, show that information. Otherwise, say nothing was found

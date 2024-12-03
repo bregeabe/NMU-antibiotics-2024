@@ -243,14 +243,14 @@ class App(customtkinter.CTk):
             print(f"Error in open_work_card: {e}")
 
 
-    def open_culture_notes(self):
+    def open_culture_notes(self, userPatientId, patientData):
         try:
             self.clear_frame()
-            self.culture_notes_frame = Culture_Notes(self)
+            self.culture_notes_frame = Culture_Notes(self, patientData)
             self.culture_notes_frame.build()
 
             if hasattr(self.culture_notes_frame, 'populate_form') and callable(self.culture_notes_frame.populate_form):
-                self.culture_notes_frame.populate_form()
+                self.culture_notes_frame.populate_form(userPatientId)
             else:
                 print("populate_form method is not defined or callable in Culture_Notes.")
         except Exception as e:

@@ -89,9 +89,9 @@ CREATE TABLE IF NOT EXISTS WorkCard (
     day5Observation TEXT,
     day5Date TEXT,
     day5Time TEXT,
-    finalObservation TEXT,
-    finalDate TEXT,
-    finalTime TEXT,
+    day6Observation TEXT,
+    day6Date TEXT,
+    day6Time TEXT,
     criticalResults TEXT,
     FOREIGN KEY (userPatientId) REFERENCES UserPatients(userPatientId)
 );

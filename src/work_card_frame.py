@@ -12,7 +12,7 @@ class Work_Card_Frame:
         self.headerFont = customtkinter.CTkFont(size=18, weight="bold")
 
         self.notes = Culture_Notes(main_screen)
-        self.current_user = main_screen.current_user_id
+        self.current_user_id = main_screen.current_user_id
         self.placeholders = {}
 
 
@@ -176,7 +176,7 @@ class Work_Card_Frame:
 
         final_entry = customtkinter.CTkEntry(culture_readout_frame, placeholder_text="Final observations")
         final_entry.grid(row=6, columnspan=3, column=1, padx=(5, 10), pady=10, sticky="ew")
-        self.placeholders["finalObservation"] = final_entry
+        self.placeholders["day6Observation"] = final_entry
 
 
         self.create_date_and_time(culture_readout_frame, 5)
@@ -194,12 +194,19 @@ class Work_Card_Frame:
         self.placeholders["criticalResults"] = critical_results_entry
 
     def go_to_culture_notes(self):
-        patient_data = dbCalls.get_patient_data(self.current_user)
-        if patient_data:
-            self.main_screen.patient_data = patient_data
-            self.main_screen.open_culture_notes()
-        else:
-            print("Unable to fetch patient data for Culture Notes.")
+        patientData = {
+                "patientName": self.placeholders["Patient Name"].get().strip(),
+                "patientDob": self.placeholders["Patient DOB"].get().strip(),
+                "mrn": self.placeholders["MRN"].get().strip(),
+                "gender": self.placeholders["Sex"].get().strip(),
+                "dateCollected": self.placeholders["Date Collected"].get().strip(),
+                "timeCollected": self.placeholders["Time Collected"].get().strip(),
+                "specimenDiagnosis": self.placeholders["Specimen Diagnosis"].get().strip(),
+                "provider": self.placeholders["Patient Doctor"].get().strip()
+            }
+        patient_id = dbCalls.get_patient_id_by_mrn(patientData['mrn'])
+        user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
+        self.main_screen.open_culture_notes(user_patient_id, list(patientData.values()))
 
 
     def create_button_section(self, non_prefilled_frame):
@@ -241,7 +248,9 @@ class Work_Card_Frame:
                 "specimenDiagnosis": self.placeholders["Specimen Diagnosis"].get().strip(),
                 "provider": self.placeholders["Patient Doctor"].get().strip()
             }
-            data["userPatientId"] = self.current_user
+            patient_id = dbCalls.get_patient_id_by_mrn(self.placeholders["MRN"].get().strip())
+            user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
+            data["userPatientId"] = user_patient_id
             data["cultureId"] = self.placeholders["Culture ID"].get().strip()
             data["priority"] = self.placeholders["Priority"].get().strip()
 
@@ -261,14 +270,13 @@ class Work_Card_Frame:
                 data[f"day{i}Time"] = self.placeholders[f"day{i}Time"].get().strip()
 
             # Save final observation
-            data["finalObservation"] = self.placeholders["finalObservation"].get().strip()
-            data["finalDate"] = self.placeholders["day6Date"].get().strip()
-            data["finalTime"] = self.placeholders["day6Time"].get().strip()
+            data["day6Observation"] = self.placeholders["day6Observation"].get().strip()
+            data["day6Date"] = self.placeholders["day6Date"].get().strip()
+            data["day6Time"] = self.placeholders["day6Time"].get().strip()
 
             # Save critical results
             critical_results_widget = self.placeholders.get("criticalResults")
             if critical_results_widget:
-                print(critical_results_widget.get("1.0", "end").strip())
                 data["criticalResults"] = critical_results_widget.get("1.0", "end").strip()
             else:
                 data["criticalResults"] = ""
@@ -280,6 +288,8 @@ class Work_Card_Frame:
             columns = ", ".join(data.keys())
             placeholders = ", ".join(["?"] * len(data))
             updates = ", ".join([f"{col} = excluded.{col}" for col in data.keys()])
+
+            print(data)
 
             query = f'''
                 INSERT INTO WorkCard ({columns})
@@ -337,13 +347,15 @@ class Work_Card_Frame:
         try:
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
+            patient_id = dbCalls.get_patient_id_by_mrn(patient_data[2])
+            user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
 
             query = '''
                 SELECT *
                 FROM WorkCard
                 WHERE userPatientId = ?
             '''
-            cursor.execute(query, (self.current_user,))
+            cursor.execute(query, (user_patient_id,))
             record = cursor.fetchone()
 
             if not record:
@@ -358,14 +370,13 @@ class Work_Card_Frame:
                 "day3Observation", "day3Date", "day3Time",
                 "day4Observation", "day4Date", "day4Time",
                 "day5Observation", "day5Date", "day5Time",
-                "finalObservation", "finalDate", "finalTime",
+                "day6Observation", "day6Date", "day6Time",
                 "criticalResults"
             ]
 
             workcard_data = dict(zip(column_names, record))
 
             for key, value in workcard_data.items():
-                print(key)
                 if key in self.placeholders:
                     entry_widget = self.placeholders[key]
                     if isinstance(entry_widget, customtkinter.CTkEntry):
@@ -379,6 +390,18 @@ class Work_Card_Frame:
                     elif isinstance(entry_widget, customtkinter.CTkOptionMenu):
                         # For dropdowns (e.g., priority)
                         entry_widget.set(value if value else "")
+
+            if "Culture ID" in self.placeholders:
+                culture_id_widget = self.placeholders["Culture ID"]
+                culture_id_value = workcard_data.get("cultureId", "")
+                culture_id_widget.delete(0, "end")
+                culture_id_widget.insert(0, str(culture_id_value) if culture_id_value else "")
+
+            if "Priority" in self.placeholders:
+                priority_widget = self.placeholders["Priority"]
+                priority_value = workcard_data.get("priority", "")
+                priority_widget.set(priority_value if priority_value else "")
+
 
             gram_stain_fields = {
                 "WBC": "wbcQty",

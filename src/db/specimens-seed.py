@@ -25,7 +25,7 @@ INSERT INTO WorkCard (
     day3Observation, day3Date, day3Time,
     day4Observation, day4Date, day4Time,
     day5Observation, day5Date, day5Time,
-    finalObservation, finalDate, finalTime,
+    day6Observation, day6Date, day6Time,
     criticalResults
 ) VALUES (
     1, 1001, 'Routine Aerobic',
