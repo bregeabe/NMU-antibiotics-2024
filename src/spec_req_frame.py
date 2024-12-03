@@ -34,16 +34,24 @@ class Specimen_Requisition:
 
         placeholders = [
             "Dr. ...", "Check up, ...", "MM/DD/YYYY", "Military time",
-            "Urine, sputum, ...", "Urine culture, ...", "Yes / No"
+            "Urine, sputum, ...", "Urine culture, ..."
         ]
 
         for i, placeholder in enumerate(placeholders, start=5):
             entry = customtkinter.CTkEntry(self.left_spec_frame, placeholder_text=placeholder, font=self.mainFont, width=250)
             entry.grid(column=1, row=i, padx=10, pady=5)
 
+        # Add dropdown for "Is Patient Receiving Therapy?"
+        receiving_therapy_dropdown = customtkinter.CTkOptionMenu(
+            self.left_spec_frame, values=["Yes", "No"], font=self.mainFont, width=250
+        )
+        receiving_therapy_dropdown.grid(column=1, row=11, padx=10, pady=5)
+        self.receiving_therapy_dropdown = receiving_therapy_dropdown
 
     def build_right_labels(self):
-        self.lab_only_label = customtkinter.CTkLabel(self.right_spec_frame, text="Laboratory Staff Only", font=self.headerFont, text_color="#FFFFFF")
+        self.lab_only_label = customtkinter.CTkLabel(
+            self.right_spec_frame, text="Laboratory Staff Only", font=self.headerFont, text_color="#FFFFFF"
+        )
         self.lab_only_label.grid(column=0, row=0, padx=10, pady=(10, 20), columnspan=2, sticky="w")
 
         labels = ["Time Received in Lab:", "Is the Specimen Acceptable?"]
@@ -52,18 +60,32 @@ class Specimen_Requisition:
             label.grid(column=0, row=i+1, sticky="w", padx=10, pady=5)
 
     def build_right_entries(self):
-        placeholders = ["Military time", "Yes / No"]
-        for i, placeholder in enumerate(placeholders):
-            entry = customtkinter.CTkEntry(self.right_spec_frame, placeholder_text=placeholder, font=self.mainFont, width=250)
-            entry.grid(column=1, row=i+1, padx=10, pady=5)
+        # Entry for "Time Received in Lab"
+        time_received_entry = customtkinter.CTkEntry(
+            self.right_spec_frame, placeholder_text="Military time", font=self.mainFont, width=250
+        )
+        time_received_entry.grid(column=1, row=1, padx=10, pady=5)
+        self.time_received_entry = time_received_entry
 
-        self.right_spec_frame.grid_rowconfigure(len(placeholders)+3, weight=1)
+        # Dropdown for "Is the Specimen Acceptable?"
+        specimen_acceptable_dropdown = customtkinter.CTkOptionMenu(
+            self.right_spec_frame, values=["Yes", "No"], font=self.mainFont, width=250
+        )
+        specimen_acceptable_dropdown.grid(column=1, row=2, padx=10, pady=5)
+        self.specimen_acceptable_dropdown = specimen_acceptable_dropdown
 
-        self.cancel_button = customtkinter.CTkButton(self.right_spec_frame, text="Cancel", font=self.mainFont, command=self.cancel_action)
-        self.cancel_button.grid(column=0, row=len(placeholders)+20, padx=10, pady=20)
+        self.right_spec_frame.grid_rowconfigure(5, weight=1)
 
-        self.submit_button = customtkinter.CTkButton(self.right_spec_frame, text="Submit", font=self.mainFont, command=self.submit_action)
-        self.submit_button.grid(column=1, row=len(placeholders)+20, padx=10, pady=20)
+        self.cancel_button = customtkinter.CTkButton(
+            self.right_spec_frame, text="Cancel", font=self.mainFont, command=self.cancel_action
+        )
+        self.cancel_button.grid(column=0, row=20, padx=10, pady=20)
+
+        self.submit_button = customtkinter.CTkButton(
+            self.right_spec_frame, text="Submit", font=self.mainFont, command=self.submit_action
+        )
+        self.submit_button.grid(column=1, row=20, padx=10, pady=20)
+
 
     def build_frames(self):
         self.left_spec_frame = customtkinter.CTkFrame(self.right_dashboard, fg_color="#2b2b2b")
@@ -99,16 +121,18 @@ class Specimen_Requisition:
     def submit_action(self):
         connection = None
         try:
-            # Gather data
+            # left entries
             provider = self.left_spec_frame.grid_slaves(row=5, column=1)[0].get()
             diagnosis = self.left_spec_frame.grid_slaves(row=6, column=1)[0].get()
             collection_date = self.left_spec_frame.grid_slaves(row=7, column=1)[0].get()
             collection_time = self.left_spec_frame.grid_slaves(row=8, column=1)[0].get()
             specimen_type = self.left_spec_frame.grid_slaves(row=9, column=1)[0].get()
             test_ordered = self.left_spec_frame.grid_slaves(row=10, column=1)[0].get()
-            receiving_therapy = self.left_spec_frame.grid_slaves(row=11, column=1)[0].get().lower() == "yes"
-            received_in_lab = self.right_spec_frame.grid_slaves(row=1, column=1)[0].get()
-            specimen_acceptable = self.right_spec_frame.grid_slaves(row=2, column=1)[0].get().lower() == "yes"
+            receiving_therapy = self.receiving_therapy_dropdown.get() == "Yes"
+
+            # right entries
+            received_in_lab = self.time_received_entry.get()
+            specimen_acceptable = self.specimen_acceptable_dropdown.get() == "Yes"
 
             # Database connection
             connection = sqlite3.connect('antibiotics.db')
@@ -139,7 +163,6 @@ class Specimen_Requisition:
                 specimen_type, test_ordered, receiving_therapy, received_in_lab, specimen_acceptable
             ))
 
-            # Commit and close
             connection.commit()
             print("Specimen requisition data upserted successfully.")
             self.main_screen.clear_frame()
@@ -151,20 +174,19 @@ class Specimen_Requisition:
             if connection:
                 connection.close()
 
-
-
     def populate_form(self, patient_data):
         if patient_data:
+            # Populate non-editable patient info fields
             non_editable_fields = [1, 2, 3, 4]
             for i, value in enumerate(patient_data[:4]):
                 label_widget = self.left_spec_frame.grid_slaves(row=non_editable_fields[i], column=1)
                 if label_widget:
                     label_widget[0].configure(text=str(value) if value else "")
 
+            # Fetch specimen requisition data
             connection = sqlite3.connect('antibiotics.db')
             cursor = connection.cursor()
 
-            # Fetch data from SpecimenRequisition
             cursor.execute('''
                 SELECT provider, diagnosis, collectionDate, collectionTime, specimenType, testOrdered,
                     receivingTherapy, receivedInLab, specimenAcceptable
@@ -178,17 +200,29 @@ class Specimen_Requisition:
 
             if specimen_data:
                 print("Specimen requisition data fetched:", specimen_data)
-                for i, value in enumerate(specimen_data, start=5):
-                    if value == 0:
-                        value = "No"
-                    if value == 1:
-                        value = "Yes"
+
+                # Populate left-side fields (provider to specimen type)
+                for i, value in enumerate(specimen_data[:7], start=5):
                     entry_widget = self.left_spec_frame.grid_slaves(row=i, column=1)
-                    if entry_widget:
+                    if entry_widget and i != 11:  # Skip "Is Patient Receiving Therapy?" for now
                         entry_widget[0].delete(0, 'end')
                         entry_widget[0].insert(0, str(value) if value else "")
+                        entry_widget[0].update()
+
+                # Populate "Is Patient Receiving Therapy?" dropdown
+                self.receiving_therapy_dropdown.set("Yes" if specimen_data[6] == 1 else "No")
+
+                # Populate right-side fields ("Time Received in Lab", "Is the Specimen Acceptable?")
+                self.time_received_entry.delete(0, 'end')
+                self.time_received_entry.insert(0, specimen_data[7] if specimen_data[7] else "")
+                self.time_received_entry.update()
+
+                self.specimen_acceptable_dropdown.set("Yes" if specimen_data[8] == 1 else "No")
             else:
                 print("No specimen requisition data found for this patient.")
+
+
+
 
 
 

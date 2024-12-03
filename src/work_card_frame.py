@@ -12,7 +12,7 @@ class Work_Card_Frame:
         self.headerFont = customtkinter.CTkFont(size=18, weight="bold")
 
         self.notes = Culture_Notes(main_screen)
-        self.current_user = main_screen.current_user_id
+        self.current_user_id = main_screen.current_user_id
         self.placeholders = {}
 
 
@@ -61,8 +61,7 @@ class Work_Card_Frame:
 
             field_entry = customtkinter.CTkEntry(prefilled_frame, placeholder_text=placeholder)
             field_entry.grid(row=row * 2 + 1, column=col, padx=(5, 10), pady=2, sticky="ew")
-            
-            # Store the entry in placeholders
+
             self.placeholders[label] = field_entry
 
 
@@ -99,20 +98,41 @@ class Work_Card_Frame:
         gram_stain_frame.grid(row=1, column=0, columnspan=8, padx=10, pady=10, sticky="ew")
 
         gram_stain_label = customtkinter.CTkLabel(gram_stain_frame, text="Direct Gram Stain: ", font=self.mainFont)
-        gram_stain_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w")
+        gram_stain_label.grid(row=0, column=0, columnspan=8, padx=5, pady=5, sticky="w")
 
-        gram_stain_options = ["WBC", "EPI", "GPC", "GPB", "GNC", "GNB", "Other"]
+        gram_stain_options = ["None Seen", "1+", "2+", "3+", "4+"]
+        free_text_option = "Other"
 
-        for col in range(len(gram_stain_options) * 2):  # Multiply by 2 for label-entry pairs
+        # Configure columns to allow for uniform expansion
+        for col in range(8):
             gram_stain_frame.grid_columnconfigure(col, weight=1, uniform="stain")
 
-        for i, option in enumerate(gram_stain_options):
-            label = customtkinter.CTkLabel(gram_stain_frame, text=option, font=self.mainFont)
-            label.grid(row=0, column=(i * 2)+1, padx=(5, 2), pady=2, sticky="e")
+        # First row of fields
+        first_row_fields = ["WBC", "EPI", "GPC"]
+        for i, field in enumerate(first_row_fields):
+            label = customtkinter.CTkLabel(gram_stain_frame, text=field, font=self.mainFont)
+            label.grid(row=1, column=i * 2, padx=(10, 5), pady=5, sticky="e")
 
-            entry = customtkinter.CTkEntry(gram_stain_frame, width=40, placeholder_text="Qty")
-            entry.grid(row=0, column=(i * 2) + 2, padx=(2, 10), pady=2, sticky="w")
-            self.placeholders[option] = entry  # Add to placeholders
+            dropdown = customtkinter.CTkOptionMenu(gram_stain_frame, values=gram_stain_options, width=100)
+            dropdown.grid(row=1, column=(i * 2) + 1, padx=(5, 10), pady=5, sticky="w")
+            self.placeholders[field] = dropdown
+
+        # Second row of fields
+        second_row_fields = ["GPB", "GNC", "GNB", free_text_option]
+        for i, field in enumerate(second_row_fields):
+            label = customtkinter.CTkLabel(gram_stain_frame, text=field, font=self.mainFont)
+            label.grid(row=2, column=i * 2, padx=(10, 5), pady=5, sticky="e")
+
+            if field == free_text_option:
+                # Free-text field for "Other" with larger column span
+                entry = customtkinter.CTkEntry(gram_stain_frame, placeholder_text="Qty")
+                entry.grid(row=2, column=(i * 2) + 1, columnspan=2, padx=(5, 10), pady=5, sticky="ew")
+                self.placeholders[field] = entry
+            else:
+                # Dropdown for predefined options
+                dropdown = customtkinter.CTkOptionMenu(gram_stain_frame, values=gram_stain_options, width=100)
+                dropdown.grid(row=2, column=(i * 2) + 1, padx=(5, 10), pady=5, sticky="w")
+                self.placeholders[field] = dropdown
 
 
     def create_date_and_time(self, culture_readout_frame, i):
@@ -156,7 +176,7 @@ class Work_Card_Frame:
 
         final_entry = customtkinter.CTkEntry(culture_readout_frame, placeholder_text="Final observations")
         final_entry.grid(row=6, columnspan=3, column=1, padx=(5, 10), pady=10, sticky="ew")
-        self.placeholders["finalObservation"] = final_entry
+        self.placeholders["day6Observation"] = final_entry
 
 
         self.create_date_and_time(culture_readout_frame, 5)
@@ -171,54 +191,22 @@ class Work_Card_Frame:
 
         critical_results_entry = customtkinter.CTkTextbox(critical_results_frame, height=60)
         critical_results_entry.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
-        self.placeholders["critical_results"] = critical_results_entry  # Add to placeholders
-
-
-    def get_gram_stain_value(self, option):
-        gram_stain_values = {
-            "WBC": self.placeholders.get("WBC"),
-            "EPI": self.placeholders.get("EPI"),
-            "GPC": self.placeholders.get("GPC"),
-            "GPB": self.placeholders.get("GPB"),
-            "GNC": self.placeholders.get("GNC"),
-            "GNB": self.placeholders.get("GNB"),
-            "Other": self.placeholders.get("Other")
-        }
-        return gram_stain_values.get(option, None).get() if gram_stain_values.get(option) else None
-
-    def get_date_and_time(self, day_number):
-        date_key = f"day{day_number}Date"
-        time_key = f"day{day_number}Time"
-
-        date_entry = self.placeholders.get(date_key)
-        time_entry = self.placeholders.get(time_key)
-
-        date_value = date_entry.get() if date_entry else None
-        time_value = time_entry.get() if time_entry else None
-
-        return date_value, time_value
-    
-    def get_day_observations(self, day_number):
-        day_key = f"day{day_number}Observations"
-        day_entry = self.placeholders.get(day_key)
-        return day_entry.get() if day_entry else None
-
-    def get_final_observations(self):
-        final_entry = self.placeholders.get("final_observations")
-        return final_entry.get() if final_entry else None
-
-    def get_critical_results(self):
-        critical_results_entry = self.placeholders.get("critical_results")
-        return critical_results_entry.get() if critical_results_entry else None
+        self.placeholders["criticalResults"] = critical_results_entry
 
     def go_to_culture_notes(self):
-        # Fetch full patient data (8 fields) before navigating to Culture Notes
-        patient_data = dbCalls.get_patient_data(self.current_user)  # Use current_user ID to fetch
-        if patient_data:
-            self.main_screen.patient_data = patient_data  # Save patient data globally in main_screen
-            self.main_screen.open_culture_notes()
-        else:
-            print("Unable to fetch patient data for Culture Notes.")
+        patientData = {
+                "patientName": self.placeholders["Patient Name"].get().strip(),
+                "patientDob": self.placeholders["Patient DOB"].get().strip(),
+                "mrn": self.placeholders["MRN"].get().strip(),
+                "gender": self.placeholders["Sex"].get().strip(),
+                "dateCollected": self.placeholders["Date Collected"].get().strip(),
+                "timeCollected": self.placeholders["Time Collected"].get().strip(),
+                "specimenDiagnosis": self.placeholders["Specimen Diagnosis"].get().strip(),
+                "provider": self.placeholders["Patient Doctor"].get().strip()
+            }
+        patient_id = dbCalls.get_patient_id_by_mrn(patientData['mrn'])
+        user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
+        self.main_screen.open_culture_notes(user_patient_id, list(patientData.values()))
 
 
     def create_button_section(self, non_prefilled_frame):
@@ -226,7 +214,6 @@ class Work_Card_Frame:
         button_frame = customtkinter.CTkFrame(non_prefilled_frame)
         button_frame.grid(row=4, column=0, columnspan=8, padx=10, pady=10, sticky="ew")
 
-        # Configure middle columns to take up the extra space
         for col in range(2, 6):
             button_frame.grid_columnconfigure(col, weight=1)
 
@@ -261,39 +248,48 @@ class Work_Card_Frame:
                 "specimenDiagnosis": self.placeholders["Specimen Diagnosis"].get().strip(),
                 "provider": self.placeholders["Patient Doctor"].get().strip()
             }
-            data["userPatientId"] = self.current_user
+            patient_id = dbCalls.get_patient_id_by_mrn(self.placeholders["MRN"].get().strip())
+            user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
+            data["userPatientId"] = user_patient_id
             data["cultureId"] = self.placeholders["Culture ID"].get().strip()
             data["priority"] = self.placeholders["Priority"].get().strip()
 
-            gram_stain_options = ["WBC", "EPI", "GPC", "GPB", "GNC", "GNB", "Other"]
-            for option in gram_stain_options:
-                entry_widget = self.placeholders.get(option)
-                if entry_widget:
-                    data[f"{option.lower()}Qty"] = entry_widget.get().strip()
-                else:
-                    data[f"{option.lower()}Qty"] = ""
+            # Save gram stain fields, including "GNB" and "Other"
+            gram_stain_fields = ["WBC", "EPI", "GPC", "GPB", "GNC", "GNB", "Other"]
+            for field in gram_stain_fields:
+                entry_widget = self.placeholders.get(field)
+                if isinstance(entry_widget, customtkinter.CTkOptionMenu):
+                    data[f"{field.lower()}Qty"] = entry_widget.get().strip()
+                elif isinstance(entry_widget, customtkinter.CTkEntry):
+                    data[f"{field.lower()}Qty"] = entry_widget.get().strip()
 
+            # Save culture readout fields
             for i in range(1, 6):
                 data[f"day{i}Observation"] = self.placeholders[f"day{i}Observation"].get().strip()
                 data[f"day{i}Date"] = self.placeholders[f"day{i}Date"].get().strip()
                 data[f"day{i}Time"] = self.placeholders[f"day{i}Time"].get().strip()
 
-            data["finalObservation"] = self.placeholders["finalObservation"].get().strip()
-            data["finalDate"] = self.placeholders["day6Date"].get().strip()
-            data["finalTime"] = self.placeholders["day6Time"].get().strip()
+            # Save final observation
+            data["day6Observation"] = self.placeholders["day6Observation"].get().strip()
+            data["day6Date"] = self.placeholders["day6Date"].get().strip()
+            data["day6Time"] = self.placeholders["day6Time"].get().strip()
 
-            critical_results_widget = self.placeholders.get("critical_results")
+            # Save critical results
+            critical_results_widget = self.placeholders.get("criticalResults")
             if critical_results_widget:
                 data["criticalResults"] = critical_results_widget.get("1.0", "end").strip()
             else:
                 data["criticalResults"] = ""
 
+            # Save data into the database
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
 
             columns = ", ".join(data.keys())
             placeholders = ", ".join(["?"] * len(data))
             updates = ", ".join([f"{col} = excluded.{col}" for col in data.keys()])
+
+            print(data)
 
             query = f'''
                 INSERT INTO WorkCard ({columns})
@@ -351,13 +347,15 @@ class Work_Card_Frame:
         try:
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
+            patient_id = dbCalls.get_patient_id_by_mrn(patient_data[2])
+            user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
 
             query = '''
                 SELECT *
                 FROM WorkCard
                 WHERE userPatientId = ?
             '''
-            cursor.execute(query, (self.current_user,))
+            cursor.execute(query, (user_patient_id,))
             record = cursor.fetchone()
 
             if not record:
@@ -372,7 +370,7 @@ class Work_Card_Frame:
                 "day3Observation", "day3Date", "day3Time",
                 "day4Observation", "day4Date", "day4Time",
                 "day5Observation", "day5Date", "day5Time",
-                "finalObservation", "finalDate", "finalTime",
+                "day6Observation", "day6Date", "day6Time",
                 "criticalResults"
             ]
 
@@ -393,16 +391,17 @@ class Work_Card_Frame:
                         # For dropdowns (e.g., priority)
                         entry_widget.set(value if value else "")
 
-            if "cultureId" in workcard_data:
-                culture_id_widget = self.placeholders.get("Culture ID")
-                if culture_id_widget:
-                    culture_id_widget.delete(0, "end")
-                    culture_id_widget.insert(0, workcard_data["cultureId"])
+            if "Culture ID" in self.placeholders:
+                culture_id_widget = self.placeholders["Culture ID"]
+                culture_id_value = workcard_data.get("cultureId", "")
+                culture_id_widget.delete(0, "end")
+                culture_id_widget.insert(0, str(culture_id_value) if culture_id_value else "")
 
-            if "priority" in workcard_data:
-                priority_widget = self.placeholders.get("Priority")
-                if priority_widget:
-                    priority_widget.set(workcard_data["priority"])
+            if "Priority" in self.placeholders:
+                priority_widget = self.placeholders["Priority"]
+                priority_value = workcard_data.get("priority", "")
+                priority_widget.set(priority_value if priority_value else "")
+
 
             gram_stain_fields = {
                 "WBC": "wbcQty",
@@ -416,8 +415,11 @@ class Work_Card_Frame:
             for field, column in gram_stain_fields.items():
                 widget = self.placeholders.get(field)
                 if widget and column in workcard_data:
-                    widget.delete(0, "end")
-                    widget.insert(0, workcard_data[column])
+                    if isinstance(widget, customtkinter.CTkOptionMenu):
+                        widget.set(workcard_data[column])
+                    elif isinstance(widget, customtkinter.CTkEntry):
+                        widget.delete(0, "end")
+                        widget.insert(0, workcard_data[column])
 
         except Exception as e:
             print(f"Error in populate_form for Work Card: {e}")
@@ -425,9 +427,3 @@ class Work_Card_Frame:
         finally:
             if connection:
                 connection.close()
-
-
-
-
-
-
