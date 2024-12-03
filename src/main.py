@@ -230,9 +230,8 @@ class App(customtkinter.CTk):
         try:
             self.clear_frame()
 
-            # Use saved patient data if no data is explicitly passed
             if not patient_data and hasattr(self, 'patient_data'):
-                patient_data = self.patient_data  # Fetch globally stored patient data
+                patient_data = self.patient_data
 
             if patient_data:
                 self.workcard_frame = Work_Card_Frame(self)
