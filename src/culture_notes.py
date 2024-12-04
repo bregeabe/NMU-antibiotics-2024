@@ -34,10 +34,10 @@ class Culture_Notes:
         title_label = customtkinter.CTkLabel(self.right_dashboard, text="NMU Lab Microbiology Work Card Notes", font=aFont)
         title_label.grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="ew")
 
-    def create_culture_workup(self):
+    def create_isolate_number(self):
         self.culture_frame = customtkinter.CTkFrame(self.biochem_frame)
         self.culture_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
-        customtkinter.CTkLabel(self.culture_frame, text="Culture Workup", font=self.headerFont).grid(row=0, column=0, sticky="w", padx=10)
+        customtkinter.CTkLabel(self.culture_frame, text="Isolate Number", font=self.headerFont).grid(row=0, column=0, sticky="w", padx=10)
         self.culture_entry = customtkinter.CTkTextbox(self.culture_frame, width=375, height=60)
         self.culture_entry.grid(row=1, column=0, padx=10, pady=10)
 
@@ -48,26 +48,30 @@ class Culture_Notes:
         self.colony_entry = customtkinter.CTkTextbox(self.colony_frame, width=375, height=60)
         self.colony_entry.grid(row=1, column=0, padx=10, pady=10)
 
-    def create_biochem_desc(self):
+    def create_additional_notes(self):
         self.reactions_frame = customtkinter.CTkFrame(self.biochem_frame)
         self.reactions_frame.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
-        customtkinter.CTkLabel(self.reactions_frame, text="Biochemical Reactions Noted", font=self.headerFont).grid(row=0, column=0, sticky="w", padx=10)
+        customtkinter.CTkLabel(self.reactions_frame, text="Additional Notes", font=self.headerFont).grid(row=0, column=0, sticky="w", padx=10)
         self.reactions_entry = customtkinter.CTkTextbox(self.reactions_frame, width=375, height=60)
         self.reactions_entry.grid(row=1, column=0, padx=10, pady=10)
 
     def create_notes(self):
-        self.create_culture_workup()
+        self.create_isolate_number()
         self.create_colony_desc()
-        self.create_biochem_desc()
+        self.create_additional_notes()
 
 
-        # Add initial 6 tests
-        for i in range(6):
+        # Add 3 biochem tests
+        for i in range(3):
             self.add_biochem_test(i)
+
+        # add 3 simulated biochem tests
+        for i in range(3):
+            self.add_sim_biochem_test(i+3)
         
         # Configure columns and rows to take up space evenly
         self.biochem_frame.grid_columnconfigure((0, 1, 2), weight=1)
-        self.biochem_frame.grid_rowconfigure((1, 2), weight=1)
+        self.biochem_frame.grid_rowconfigure((0, 1), weight=1)
 
 
     def add_biochem_test(self, test_number):
@@ -76,10 +80,41 @@ class Culture_Notes:
 
         # Frame for each biochem test, placed in a specific row and column
         test_frame = customtkinter.CTkFrame(self.biochem_frame)
-        test_frame.grid(row=row + 1, column=col, padx=10, pady=5, sticky="nsew")  # Offset row by 1 for correct positioning
 
         # Add input fields for the test within this test_frame
         customtkinter.CTkLabel(test_frame, text=f"Biochem Test {test_number + 1}", font=self.headerFont).grid(padx=5, row=0, column=0, columnspan=2, sticky="w")
+
+        customtkinter.CTkLabel(test_frame, text="Test Name", font=self.mainFont).grid(padx=5, row=1, column=0, sticky="w")
+        test_name_entry = customtkinter.CTkEntry(test_frame)
+        test_name_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        customtkinter.CTkLabel(test_frame, text="Set Up Date", font=self.mainFont).grid(padx=5, row=2, column=0, sticky="w")
+        set_up_date_entry = customtkinter.CTkEntry(test_frame)
+        set_up_date_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        customtkinter.CTkLabel(test_frame, text="Set Up Time", font=self.mainFont).grid(padx=5, row=3, column=0, sticky="w")
+        set_up_time_entry = customtkinter.CTkEntry(test_frame)
+        set_up_time_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        #Tabs and spaces are there to align it correctly.
+        customtkinter.CTkLabel(test_frame, text="Result\t\t       ", font=self.mainFont).grid(padx=5, row=4, column=0, sticky="w")
+        results_entry = customtkinter.CTkEntry(test_frame)
+        results_entry.grid(row=4, column=1, padx=5, pady=5)
+
+        test_frame.grid_columnconfigure((0,1),weight=1)
+        test_frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
+        test_frame.grid(row=row + 1, column=col, padx=10, pady=5, sticky="nsew")  # Offset row by 1 for correct positioning
+
+    def add_sim_biochem_test(self, test_number):
+        # Calculate row and column based on the test count
+        row, col = divmod(test_number, 3)
+
+        # Frame for each biochem test, placed in a specific row and column
+        test_frame = customtkinter.CTkFrame(self.biochem_frame)
+        test_frame.grid(row=row + 1, column=col, padx=10, pady=5, sticky="nsew")  # Offset row by 1 for correct positioning
+
+        # Add input fields for the test within this test_frame
+        customtkinter.CTkLabel(test_frame, text=f"Simultated Biochem Test {test_number - 3 + 1}", font=self.headerFont).grid(padx=5, row=0, column=0, columnspan=2, sticky="w")
 
         customtkinter.CTkLabel(test_frame, text="Test Name", font=self.mainFont).grid(padx=5, row=1, column=0, sticky="w")
         test_name_entry = customtkinter.CTkEntry(test_frame)
@@ -99,7 +134,14 @@ class Culture_Notes:
 
         customtkinter.CTkLabel(test_frame, text="Atmospheric Conditions", font=self.mainFont).grid(padx=5, row=5, column=0, sticky="w")
         conditions_entry = customtkinter.CTkEntry(test_frame)
-        conditions_entry.grid(row=5, column=1, padx=5, pady=10)
+        conditions_entry.grid(row=5, column=1, padx=5, pady=5)
+
+        customtkinter.CTkLabel(test_frame, text="Result", font=self.mainFont).grid(padx=5, row=6, column=0, sticky="w")
+        conditions_entry = customtkinter.CTkEntry(test_frame)
+        conditions_entry.grid(row=6, column=1, padx=5, pady=5)
+
+        test_frame.grid_columnconfigure((0,1),weight=1)
+        test_frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
 
     def create_buttons(self):
@@ -123,12 +165,21 @@ class Culture_Notes:
 
     def save(self):
         try:
-            culture_workup = self.culture_entry.get("1.0", "end").strip()
+            isolate_number = self.culture_entry.get("1.0", "end").strip()
             colony_desc = self.colony_entry.get("1.0", "end").strip()
             biochem_reactions = self.reactions_entry.get("1.0", "end").strip()
 
             biochem_tests = []
-            for i in range(6):
+
+            for i in range(3):
+                test_frame = self.biochem_frame.grid_slaves(row=i // 3 + 1, column=i % 3)[0]
+                test_name = test_frame.grid_slaves(row=1, column=1)[0].get().strip()
+                set_up_date = test_frame.grid_slaves(row=2, column=1)[0].get().strip()
+                set_up_time = test_frame.grid_slaves(row=3, column=1)[0].get().strip()
+                results = test_frame.grid_slaves(row=4, column=1)[0].get().strip()
+                biochem_tests.append((test_name, set_up_date, set_up_time, results))
+
+            for i in range(6,3):
                 test_frame = self.biochem_frame.grid_slaves(row=i // 3 + 1, column=i % 3)[0]
                 test_name = test_frame.grid_slaves(row=1, column=1)[0].get().strip()
                 inoculation = test_frame.grid_slaves(row=2, column=1)[0].get().strip()
@@ -144,41 +195,44 @@ class Culture_Notes:
 
             query = '''
                 INSERT INTO CultureNotes (
-                    userPatientId, cultureWorkup, colonyDescription, biochemicalReactions,
-                    test1Name, test1Inoculation, test1Temperature, test1Duration, test1AtmosphericConditions,
-                    test2Name, test2Inoculation, test2Temperature, test2Duration, test2AtmosphericConditions,
-                    test3Name, test3Inoculation, test3Temperature, test3Duration, test3AtmosphericConditions,
+                    userPatientId, isolateNumber, colonyDescription, additionalNotes,
+                    test1Name, test1SetUpDate, test1SetUpTime, test1Results,                  
+                    test2Name, test2SetUpDate, test2SetUpTime, test2Results,
+                    test3Name, test3SetUpDate, test3SetUpTime, test3Results,
                     test4Name, test4Inoculation, test4Temperature, test4Duration, test4AtmosphericConditions,
                     test5Name, test5Inoculation, test5Temperature, test5Duration, test5AtmosphericConditions,
                     test6Name, test6Inoculation, test6Temperature, test6Duration, test6AtmosphericConditions
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(userPatientId) DO UPDATE SET
-                    cultureWorkup = excluded.cultureWorkup,
+                    isolateNumber = excluded.isolateNumber,
                     colonyDescription = excluded.colonyDescription,
-                    biochemicalReactions = excluded.biochemicalReactions,
-                    test1Name = excluded.test1Name, test1Inoculation = excluded.test1Inoculation,
-                    test1Temperature = excluded.test1Temperature, test1Duration = excluded.test1Duration,
-                    test1AtmosphericConditions = excluded.test1AtmosphericConditions,
-                    test2Name = excluded.test2Name, test2Inoculation = excluded.test2Inoculation,
-                    test2Temperature = excluded.test2Temperature, test2Duration = excluded.test2Duration,
-                    test2AtmosphericConditions = excluded.test2AtmosphericConditions,
-                    test3Name = excluded.test3Name, test3Inoculation = excluded.test3Inoculation,
-                    test3Temperature = excluded.test3Temperature, test3Duration = excluded.test3Duration,
-                    test3AtmosphericConditions = excluded.test3AtmosphericConditions,
+                    additionalNotes = excluded.additionalNotes,
+
+                    test1Name = excluded.test1Name, test1SetUpDate = excluded.test1SetUpDate,
+                    test1SetUpTime = excluded.test1SetUpTime, test1Results = excluded.test1Results,
+
+                    test2Name = excluded.test2Name, test2SetUpDate = excluded.test2SetUpDate,
+                    test2SetUpTime = excluded.test2SetUpTime, test2Results = excluded.test2Results,
+
+                    test3Name = excluded.test3Name, test3SetUpDate = excluded.test3SetUpDate,
+                    test3SetUpTime = excluded.test3SetUpTime, test3Results = excluded.test3Results,
+
                     test4Name = excluded.test4Name, test4Inoculation = excluded.test4Inoculation,
                     test4Temperature = excluded.test4Temperature, test4Duration = excluded.test4Duration,
                     test4AtmosphericConditions = excluded.test4AtmosphericConditions,
+
                     test5Name = excluded.test5Name, test5Inoculation = excluded.test5Inoculation,
                     test5Temperature = excluded.test5Temperature, test5Duration = excluded.test5Duration,
                     test5AtmosphericConditions = excluded.test5AtmosphericConditions,
+
                     test6Name = excluded.test6Name, test6Inoculation = excluded.test6Inoculation,
                     test6Temperature = excluded.test6Temperature, test6Duration = excluded.test6Duration,
                     test6AtmosphericConditions = excluded.test6AtmosphericConditions
             '''
 
             # Flatten biochem_tests data and insert into database
-            cursor.execute(query, (userPatientId, culture_workup, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test]))
+            cursor.execute(query, (userPatientId, isolate_number, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test]))
 
             # Commit and close
             connection.commit()
@@ -213,25 +267,25 @@ class Culture_Notes:
 
             # Map database columns to record values
             column_names = [
-                "noteId", "userPatientId", "cultureWorkup", "colonyDescription", "biochemicalReactions",
-                "test1Name", "test1Inoculation", "test1Temperature", "test1Duration", "test1AtmosphericConditions",
-                "test2Name", "test2Inoculation", "test2Temperature", "test2Duration", "test2AtmosphericConditions",
-                "test3Name", "test3Inoculation", "test3Temperature", "test3Duration", "test3AtmosphericConditions",
+                "noteId", "userPatientId", "isolateNumber", "colonyDescription", "additionalNotes",
+                "test1Name", "test1SetUpDate", "test1SetUpTime", "test1Results",
+                "test2Name", "test2SetUpDate", "test2SetUpTime", "test2Results",
+                "test3Name", "test3SetUpDate", "test3SetUpTime", "test3Results",
                 "test4Name", "test4Inoculation", "test4Temperature", "test4Duration", "test4AtmosphericConditions",
                 "test5Name", "test5Inoculation", "test5Temperature", "test5Duration", "test5AtmosphericConditions",
                 "test6Name", "test6Inoculation", "test6Temperature", "test6Duration", "test6AtmosphericConditions"
             ]
             culture_notes_data = dict(zip(column_names, record))
 
-            # Populate Culture Workup, Colony Description, and Biochemical Reactions
+            # Populate Isolate Number, Colony Description, and Additional Notes
             self.culture_entry.delete("1.0", "end")
-            self.culture_entry.insert("1.0", culture_notes_data.get("cultureWorkup", ""))
+            self.culture_entry.insert("1.0", culture_notes_data.get("isolateNumber", ""))
 
             self.colony_entry.delete("1.0", "end")
             self.colony_entry.insert("1.0", culture_notes_data.get("colonyDescription", ""))
 
             self.reactions_entry.delete("1.0", "end")
-            self.reactions_entry.insert("1.0", culture_notes_data.get("biochemicalReactions", ""))
+            self.reactions_entry.insert("1.0", culture_notes_data.get("additionalNotes", ""))
 
             # Populate Biochemical Test fields
             for i in range(6):

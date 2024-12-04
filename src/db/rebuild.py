@@ -11,12 +11,12 @@ def main():
     print("Resetting the database...")
     
     # Run the initialization script
-    run_script("/Users/abrahambrege/dev/cs495/Antibiotics/src/db/db-init.py")
+    run_script("src/db/db-init.py")
     
     # Run the seeders in the correct order
-    run_script("/Users/abrahambrege/dev/cs495/Antibiotics/src/db/patient-seed.py")
-    run_script("/Users/abrahambrege/dev/cs495/Antibiotics/src/db/user-seed.py")
-    run_script("/Users/abrahambrege/dev/cs495/Antibiotics/src/db/specimens-seed.py")
+    run_script("src/db/patient-seed.py")
+    run_script("src/db/user-seed.py")
+    run_script("src/db/specimens-seed.py")
     
     print("Database reset and seeded successfully.")
 

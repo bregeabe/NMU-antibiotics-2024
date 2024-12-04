@@ -268,6 +268,7 @@ class App(customtkinter.CTk):
                 print("populate_form method is not defined or callable in Culture_Notes.")
         except Exception as e:
             print(f"Error in open_culture_notes: {e}")
+
     def view_as(self, nmu_in):
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
@@ -275,9 +276,6 @@ class App(customtkinter.CTk):
         user = db.fetchone()
         self.current_user_id = user[0]
         self.lookup()
-
-
-
 
 a = App()
 a.mainloop()

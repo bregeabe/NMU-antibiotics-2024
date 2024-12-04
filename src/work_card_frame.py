@@ -111,44 +111,44 @@ class Work_Card_Frame:
         first_row_fields = ["WBC", "EPI", "GPC"]
         for i, field in enumerate(first_row_fields):
             label = customtkinter.CTkLabel(gram_stain_frame, text=field, font=self.mainFont)
-            label.grid(row=1, column=i * 2, padx=(10, 5), pady=5, sticky="e")
+            label.grid(row=0, column=(i * 2) + 1, padx=(10, 5), pady=5, sticky="e")
 
             dropdown = customtkinter.CTkOptionMenu(gram_stain_frame, values=gram_stain_options, width=100)
-            dropdown.grid(row=1, column=(i * 2) + 1, padx=(5, 10), pady=5, sticky="w")
+            dropdown.grid(row=0, column=(i * 2) + 2, padx=(5, 10), pady=5, sticky="w")
             self.placeholders[field] = dropdown
 
         # Second row of fields
         second_row_fields = ["GPB", "GNC", "GNB", free_text_option]
         for i, field in enumerate(second_row_fields):
             label = customtkinter.CTkLabel(gram_stain_frame, text=field, font=self.mainFont)
-            label.grid(row=2, column=i * 2, padx=(10, 5), pady=5, sticky="e")
+            label.grid(row=1, column=(i * 2) + 1, padx=(10, 5), pady=5, sticky="e")
 
             if field == free_text_option:
                 # Free-text field for "Other" with larger column span
                 entry = customtkinter.CTkEntry(gram_stain_frame, placeholder_text="Qty")
-                entry.grid(row=2, column=(i * 2) + 1, columnspan=2, padx=(5, 10), pady=5, sticky="ew")
+                entry.grid(row=1, column=(i * 2) + 2, columnspan=2, padx=(5, 10), pady=5, sticky="ew")
                 self.placeholders[field] = entry
             else:
                 # Dropdown for predefined options
                 dropdown = customtkinter.CTkOptionMenu(gram_stain_frame, values=gram_stain_options, width=100)
-                dropdown.grid(row=2, column=(i * 2) + 1, padx=(5, 10), pady=5, sticky="w")
+                dropdown.grid(row=1, column=(i * 2) + 2, padx=(5, 10), pady=5, sticky="w")
                 self.placeholders[field] = dropdown
 
 
     def create_date_and_time(self, culture_readout_frame, i):
         date_label = customtkinter.CTkLabel(culture_readout_frame, text="Date:", font=self.mainFont)
-        date_label.grid(row=i + 1, columnspan=1, column=4, padx=(5, 10), pady=10, sticky="ew")
+        date_label.grid(row=i + 1, columnspan=1, column=4, padx=(5, 10), pady=6, sticky="ew")
 
         date_entry = customtkinter.CTkEntry(culture_readout_frame)
-        date_entry.grid(row=i + 1, columnspan=1, column=5, padx=(10, 5), pady=10, sticky="ew")
+        date_entry.grid(row=i + 1, columnspan=1, column=5, padx=(10, 5), pady=6, sticky="ew")
         self.placeholders[f"day{i+1}Date"] = date_entry
 
 
         time_label = customtkinter.CTkLabel(culture_readout_frame, text="Time:", font=self.mainFont)
-        time_label.grid(row=i + 1, columnspan=1, column=6, padx=(5, 10), pady=10, sticky="ew")
+        time_label.grid(row=i + 1, columnspan=1, column=6, padx=(5, 10), pady=6, sticky="ew")
 
         time_entry = customtkinter.CTkEntry(culture_readout_frame)
-        time_entry.grid(row=i + 1, columnspan=1, column=7, padx=(10, 5), pady=10, sticky="ew")
+        time_entry.grid(row=i + 1, columnspan=1, column=7, padx=(10, 5), pady=6, sticky="ew")
         self.placeholders[f"day{i+1}Time"] = time_entry
 
     def create_culture_readout(self, aFrame):
@@ -163,19 +163,19 @@ class Work_Card_Frame:
 
         for i in range(5):
             day_label = customtkinter.CTkLabel(culture_readout_frame, text=f"Day {i+1}:", font=self.mainFont)
-            day_label.grid(row=i + 1, column=0, padx=(10, 5), pady=10, sticky="e")
+            day_label.grid(row=i + 1, column=0, padx=(10, 5), pady=6, sticky="e")
 
             day_entry = customtkinter.CTkEntry(culture_readout_frame, placeholder_text=f"Observations for Day {i+1}")
-            day_entry.grid(row=i + 1, columnspan=3, column=1, padx=(5, 10), pady=10, sticky="ew")
+            day_entry.grid(row=i + 1, columnspan=3, column=1, padx=(5, 10), pady=6, sticky="ew")
             self.placeholders[f"day{i+1}Observation"] = day_entry  # Add to placeholders
 
             self.create_date_and_time(culture_readout_frame, i)
 
         final_label = customtkinter.CTkLabel(culture_readout_frame, text="Final: ", font=self.mainFont)
-        final_label.grid(row=6, column=0, padx=(10, 5), pady=10, sticky="e")
+        final_label.grid(row=6, column=0, padx=(10, 5), pady=6, sticky="e")
 
         final_entry = customtkinter.CTkEntry(culture_readout_frame, placeholder_text="Final observations")
-        final_entry.grid(row=6, columnspan=3, column=1, padx=(5, 10), pady=10, sticky="ew")
+        final_entry.grid(row=6, columnspan=3, column=1, padx=(5, 10), pady=6, sticky="ew")
         self.placeholders["day6Observation"] = final_entry
 
 

@@ -44,11 +44,11 @@ db.execute('''
 INSERT INTO CultureNotes (
     userPatientId,
     colonyDescription,
-    cultureWorkup,
-    biochemicalReactions,
-    test1Name, test1Inoculation, test1Temperature, test1Duration, test1AtmosphericConditions,
-    test2Name, test2Inoculation, test2Temperature, test2Duration, test2AtmosphericConditions,
-    test3Name, test3Inoculation, test3Temperature, test3Duration, test3AtmosphericConditions,
+    isolateNumber,
+    additionalNotes,
+    test1Name TEXT, test1SetUpDate TEXT, test1SetUpTime INT, test1Results TEXT,     
+    test2Name TEXT, test2SetUpDate TEXT, test2SetUpTime TEXT, test2Results TEXT,
+    test3Name TEXT, test3SetUpDate TEXT, test3SetUpTime TEXT, test3Results TEXT,
     test4Name, test4Inoculation, test4Temperature, test4Duration, test4AtmosphericConditions,
     test5Name, test5Inoculation, test5Temperature, test5Duration, test5AtmosphericConditions,
     test6Name, test6Inoculation, test6Temperature, test6Duration, test6AtmosphericConditions
