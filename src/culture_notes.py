@@ -3,14 +3,15 @@ import sqlite3
 import dbCalls
 
 class Culture_Notes:
-    def __init__(self, main_screen):
+    def __init__(self, main_screen, patientData=None):
         self.main_screen = main_screen
         self.right_dashboard = main_screen.right_dashboard
 
         self.mainFont = customtkinter.CTkFont(size=16)
         self.headerFont = customtkinter.CTkFont(size=18, weight="bold")
-        self.current_user = main_screen.current_user_id
-        self.current_patient_data = dbCalls.get_patient_data(self.current_user)
+        self.current_user_id = main_screen.current_user_id
+
+        self.current_patient_data = patientData
         print(self.current_patient_data)
 
     def build(self):
@@ -138,6 +139,8 @@ class Culture_Notes:
 
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
+            patientId = dbCalls.get_patient_id_by_mrn(self.current_patient_data[2])
+            userPatientId = dbCalls.get_user_patient_id(self, patientId)
 
             query = '''
                 INSERT INTO CultureNotes (
@@ -175,7 +178,7 @@ class Culture_Notes:
             '''
 
             # Flatten biochem_tests data and insert into database
-            cursor.execute(query, (self.main_screen.current_user_id, culture_workup, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test]))
+            cursor.execute(query, (userPatientId, culture_workup, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test]))
 
             # Commit and close
             connection.commit()
@@ -190,7 +193,7 @@ class Culture_Notes:
                 connection.close()
 
 
-    def populate_form(self):
+    def populate_form(self, userPatientID):
         try:
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
@@ -201,7 +204,7 @@ class Culture_Notes:
                 FROM CultureNotes
                 WHERE userPatientId = ?
             '''
-            cursor.execute(query, (self.current_user,))
+            cursor.execute(query, (userPatientID,))
             record = cursor.fetchone()
 
             if not record:

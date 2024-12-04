@@ -9,6 +9,29 @@ def getAllPatients(db):
     connection.close()
     return patients
 
+def get_patient_id_by_mrn(mrn):
+    connection = None
+    try:
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+
+        db.execute('''
+            SELECT patientId
+            FROM Patients
+            WHERE mrn = ?
+        ''', (mrn,))
+        result = db.fetchone()
+
+        return result[0] if result else None
+
+    except Exception as e:
+        print(f"Error in get_patient_id_by_mrn: {e}")
+        return None
+
+    finally:
+        if connection:
+            connection.close()
+
 def getCultureReadoutForPatientSpecimen(db, patientSpecimenId):
     db.execute('''
         SELECT Specimens.cultureId, Specimens.criticalResults, Specimens.dayOneInfo, Specimens.dayTwoInfo, Specimens.dayThreeInfo, Specimens.dayFourInfo, Specimens.dayFiveInfo, Specimens.dayFinalInfo, Specimens.dayOneDate, Specimens.dayTwoDate, Specimens.dayThreeDate, Specimens.dayFourDate, Specimens.dayFiveDate, Specimens.dayFinalDate, Specimens.dayOneTime, Specimens.dayTwoTime, Specimens.dayThreeTime, Specimens.dayFourTime, Specimens.dayFiveTime, Specimens.dayFinalTime 
@@ -63,15 +86,16 @@ def get_specimen_data(patient_id):
     connection.close()
     return specimen_data
 
-#get user patient id, make it if it doesnt exist
-def get_user_patient_id(self):
+def get_user_patient_id(self, patientId=None):
     connection = sqlite3.connect('antibiotics.db')
     cursor = connection.cursor()
+    if not patientId:
+        patientId = self.patient_id
 
     cursor.execute('''
         SELECT userPatientId FROM UserPatients
         WHERE userId = ? AND patientId = ?
-    ''', (self.current_user_id, self.patient_id))
+    ''', (self.current_user_id, patientId))
 
     result = cursor.fetchone()
 
@@ -80,7 +104,7 @@ def get_user_patient_id(self):
     else:
         cursor.execute('''
             INSERT INTO UserPatients (userId, patientId) VALUES (?, ?)
-        ''', (self.current_user_id, self.patient_id))
+        ''', (self.current_user_id, patientId))
         connection.commit()
         user_patient_id = cursor.lastrowid
 
@@ -88,7 +112,7 @@ def get_user_patient_id(self):
         cursor.execute('''
             SELECT userPatientId FROM UserPatients
             WHERE userId = ? AND patientId = ?
-        ''', (self.current_user_id, self.patient_id))
+        ''', (self.current_user_id, patientId))
         user_patient_id = cursor.fetchone()[0]
 
     connection.close()
