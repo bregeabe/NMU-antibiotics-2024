@@ -208,6 +208,11 @@ class Work_Card_Frame:
         user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
         self.main_screen.open_culture_notes(user_patient_id, list(patientData.values()))
 
+    def grade_screen(self):
+        patient_id = dbCalls.get_patient_id_by_mrn(self.placeholders["MRN"].get().strip())
+        user_patient_id = dbCalls.get_user_patient_id(self, patient_id)
+        self.main_screen.open_grade(user_patient_id)
+
 
     def create_button_section(self, non_prefilled_frame):
 
@@ -223,6 +228,9 @@ class Work_Card_Frame:
             command=self.go_to_culture_notes
         )
         culture_notes_button.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+        grade_button = customtkinter.CTkButton(button_frame, text="Grade", command=self.grade_screen)
+        grade_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
         cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", command=self.cancel)
         cancel_button.grid(row=0, column=6, padx=5, pady=5, sticky="e")

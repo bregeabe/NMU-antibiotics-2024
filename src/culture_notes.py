@@ -165,28 +165,35 @@ class Culture_Notes:
 
     def save(self):
         try:
+            print("Saving...")
             isolate_number = self.culture_entry.get("1.0", "end").strip()
             colony_desc = self.colony_entry.get("1.0", "end").strip()
             biochem_reactions = self.reactions_entry.get("1.0", "end").strip()
 
             biochem_tests = []
+            sim_biochem_tests = []
 
             for i in range(3):
-                test_frame = self.biochem_frame.grid_slaves(row=i // 3 + 1, column=i % 3)[0]
+                test_frame = self.biochem_frame.grid_slaves(row=(i // 3) + 1, column=i % 3)[0]
                 test_name = test_frame.grid_slaves(row=1, column=1)[0].get().strip()
                 set_up_date = test_frame.grid_slaves(row=2, column=1)[0].get().strip()
                 set_up_time = test_frame.grid_slaves(row=3, column=1)[0].get().strip()
                 results = test_frame.grid_slaves(row=4, column=1)[0].get().strip()
                 biochem_tests.append((test_name, set_up_date, set_up_time, results))
 
-            for i in range(6,3):
-                test_frame = self.biochem_frame.grid_slaves(row=i // 3 + 1, column=i % 3)[0]
+            print("Filled Biochem tests: ", biochem_tests)
+
+            for i in range(3, 6):
+                test_frame = self.biochem_frame.grid_slaves(row=(i // 3 )+ 1, column=i % 3)[0]
                 test_name = test_frame.grid_slaves(row=1, column=1)[0].get().strip()
                 inoculation = test_frame.grid_slaves(row=2, column=1)[0].get().strip()
                 temperature = test_frame.grid_slaves(row=3, column=1)[0].get().strip()
                 duration = test_frame.grid_slaves(row=4, column=1)[0].get().strip()
                 atmospheric_conditions = test_frame.grid_slaves(row=5, column=1)[0].get().strip()
-                biochem_tests.append((test_name, inoculation, temperature, duration, atmospheric_conditions))
+                results = test_frame.grid_slaves(row=6, column=1)[0].get().strip()
+                sim_biochem_tests.append((test_name, inoculation, temperature, duration, atmospheric_conditions, results))
+
+            print("Filled Sim Biochem: ", sim_biochem_tests)
 
             connection = sqlite3.connect("antibiotics.db")
             cursor = connection.cursor()
@@ -199,9 +206,9 @@ class Culture_Notes:
                     test1Name, test1SetUpDate, test1SetUpTime, test1Results,                  
                     test2Name, test2SetUpDate, test2SetUpTime, test2Results,
                     test3Name, test3SetUpDate, test3SetUpTime, test3Results,
-                    test4Name, test4Inoculation, test4Temperature, test4Duration, test4AtmosphericConditions,
-                    test5Name, test5Inoculation, test5Temperature, test5Duration, test5AtmosphericConditions,
-                    test6Name, test6Inoculation, test6Temperature, test6Duration, test6AtmosphericConditions
+                    test4Name, test4Inoculation, test4Temperature, test4Duration, test4AtmosphericConditions, test4Results,
+                    test5Name, test5Inoculation, test5Temperature, test5Duration, test5AtmosphericConditions, test5Results,
+                    test6Name, test6Inoculation, test6Temperature, test6Duration, test6AtmosphericConditions, test6Results
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(userPatientId) DO UPDATE SET
@@ -220,19 +227,19 @@ class Culture_Notes:
 
                     test4Name = excluded.test4Name, test4Inoculation = excluded.test4Inoculation,
                     test4Temperature = excluded.test4Temperature, test4Duration = excluded.test4Duration,
-                    test4AtmosphericConditions = excluded.test4AtmosphericConditions,
+                    test4AtmosphericConditions = excluded.test4AtmosphericConditions, test4Results = excluded.test4Results,
 
                     test5Name = excluded.test5Name, test5Inoculation = excluded.test5Inoculation,
                     test5Temperature = excluded.test5Temperature, test5Duration = excluded.test5Duration,
-                    test5AtmosphericConditions = excluded.test5AtmosphericConditions,
+                    test5AtmosphericConditions = excluded.test5AtmosphericConditions, test5Results = excluded.test5Results,
 
                     test6Name = excluded.test6Name, test6Inoculation = excluded.test6Inoculation,
                     test6Temperature = excluded.test6Temperature, test6Duration = excluded.test6Duration,
-                    test6AtmosphericConditions = excluded.test6AtmosphericConditions
+                    test6AtmosphericConditions = excluded.test6AtmosphericConditions, test6Results = excluded.test6Results
             '''
 
             # Flatten biochem_tests data and insert into database
-            cursor.execute(query, (userPatientId, isolate_number, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test]))
+            cursor.execute(query, (userPatientId, isolate_number, colony_desc, biochem_reactions, *[item for test in biochem_tests for item in test], *[item for test in sim_biochem_tests for item in test]))
 
             # Commit and close
             connection.commit()
@@ -271,9 +278,9 @@ class Culture_Notes:
                 "test1Name", "test1SetUpDate", "test1SetUpTime", "test1Results",
                 "test2Name", "test2SetUpDate", "test2SetUpTime", "test2Results",
                 "test3Name", "test3SetUpDate", "test3SetUpTime", "test3Results",
-                "test4Name", "test4Inoculation", "test4Temperature", "test4Duration", "test4AtmosphericConditions",
-                "test5Name", "test5Inoculation", "test5Temperature", "test5Duration", "test5AtmosphericConditions",
-                "test6Name", "test6Inoculation", "test6Temperature", "test6Duration", "test6AtmosphericConditions"
+                "test4Name", "test4Inoculation", "test4Temperature", "test4Duration", "test4AtmosphericConditions","test4Results",
+                "test5Name", "test5Inoculation", "test5Temperature", "test5Duration", "test5AtmosphericConditions","test5Results",
+                "test6Name", "test6Inoculation", "test6Temperature", "test6Duration", "test6AtmosphericConditions", "test6Results"
             ]
             culture_notes_data = dict(zip(column_names, record))
 
@@ -288,7 +295,30 @@ class Culture_Notes:
             self.reactions_entry.insert("1.0", culture_notes_data.get("additionalNotes", ""))
 
             # Populate Biochemical Test fields
-            for i in range(6):
+            for i in range(3):
+                # Calculate the row and column for the test frame
+                row, col = divmod(i, 3)
+                test_frame = self.biochem_frame.grid_slaves(row=row + 1, column=col)[0]
+
+                # Get corresponding field names from the database
+                test_fields = {
+                    1: f"test{i+1}Name",
+                    2: f"test{i+1}SetUpDate",
+                    3: f"test{i+1}SetUpTime",
+                    4: f"test{i+1}Results"
+                }
+
+                # Populate each field in the test frame
+                for j, db_column in test_fields.items():
+                    widget = test_frame.grid_slaves(row=j, column=1)[0]  # Accessing the second column in the frame
+                    if widget and isinstance(widget, customtkinter.CTkEntry):
+                        widget.delete(0, "end")
+                        widget.insert(0, culture_notes_data.get(db_column, ""))
+
+            print("Populated biochem tests")
+
+            # Populate Sim Biochemical Test fields
+            for i in range(3,6):
                 # Calculate the row and column for the test frame
                 row, col = divmod(i, 3)
                 test_frame = self.biochem_frame.grid_slaves(row=row + 1, column=col)[0]
@@ -300,6 +330,7 @@ class Culture_Notes:
                     3: f"test{i+1}Temperature",
                     4: f"test{i+1}Duration",
                     5: f"test{i+1}AtmosphericConditions",
+                    6: f"test{i+1}Results"
                 }
 
                 # Populate each field in the test frame
@@ -308,6 +339,7 @@ class Culture_Notes:
                     if widget and isinstance(widget, customtkinter.CTkEntry):
                         widget.delete(0, "end")
                         widget.insert(0, culture_notes_data.get(db_column, ""))
+            print("Populated Sim biochem tests")
 
             print("Form populated successfully with Culture Notes data.")
 

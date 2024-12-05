@@ -8,6 +8,7 @@ from barcode_frame import BarcodeFrame
 from work_card_frame import Work_Card_Frame
 from culture_notes import Culture_Notes
 from user_frame import Users_Frame
+from grade_window import Grade_window
 import dbCalls
 
 DARK_MODE = "dark"
@@ -276,6 +277,10 @@ class App(customtkinter.CTk):
         user = db.fetchone()
         self.current_user_id = user[0]
         self.lookup()
+
+    def open_grade(self, user_patient_id):
+        grade_window = Grade_window(self, user_patient_id)
+        grade_window.create()
 
 a = App()
 a.mainloop()

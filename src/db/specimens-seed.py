@@ -46,9 +46,9 @@ INSERT INTO CultureNotes (
     colonyDescription,
     isolateNumber,
     additionalNotes,
-    test1Name TEXT, test1SetUpDate TEXT, test1SetUpTime INT, test1Results TEXT,     
-    test2Name TEXT, test2SetUpDate TEXT, test2SetUpTime TEXT, test2Results TEXT,
-    test3Name TEXT, test3SetUpDate TEXT, test3SetUpTime TEXT, test3Results TEXT,
+    test1Name, test1SetUpDate, test1SetUpTime, test1Results,     
+    test2Name, test2SetUpDate, test2SetUpTime, test2Results,
+    test3Name, test3SetUpDate, test3SetUpTime, test3Results,
     test4Name, test4Inoculation, test4Temperature, test4Duration, test4AtmosphericConditions,
     test5Name, test5Inoculation, test5Temperature, test5Duration, test5AtmosphericConditions,
     test6Name, test6Inoculation, test6Temperature, test6Duration, test6AtmosphericConditions
@@ -63,7 +63,7 @@ VALUES (
     NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL
+    NULL, NULL
 );
 
 ''')

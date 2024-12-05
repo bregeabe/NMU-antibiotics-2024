@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS UserPatients (
     userPatientId INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INT,
     patientId INT,
+    grade TEXT,
+    feedback TEXT, 
     FOREIGN KEY (userId) REFERENCES Users(userId),
     FOREIGN KEY (patientId) REFERENCES Patients(patientId)
 );
@@ -116,9 +118,8 @@ CREATE TABLE IF NOT EXISTS CultureNotes (
     test2Results TEXT,
            
     test3Name TEXT,
-    test3Inoculation TEXT,
-    test3Temperature INT,
-    test3Duration TEXT,
+    test3SetUpDate TEXT,
+    test3SetUpTime TEXT,
     test3Results TEXT,
            
     test4Name TEXT,
@@ -126,18 +127,21 @@ CREATE TABLE IF NOT EXISTS CultureNotes (
     test4Temperature INT,
     test4Duration TEXT,
     test4AtmosphericConditions TEXT,
+    test4Results TEXT,
            
     test5Name TEXT,
     test5Inoculation TEXT,
     test5Temperature INT,
     test5Duration TEXT,
     test5AtmosphericConditions TEXT,
+    test5Results TEXT,
            
     test6Name TEXT,
     test6Inoculation TEXT,
     test6Temperature INT,
     test6Duration TEXT,
     test6AtmosphericConditions TEXT,
+    test6Results TEXT,
            
     FOREIGN KEY (userPatientId) REFERENCES UserPatients(userPatientId)
 );
