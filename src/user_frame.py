@@ -54,13 +54,24 @@ class Users_Frame:
         self.place_search_frame()
         self.place_labels_frame()
 
+    def update_viewed_status(self, userId, checkbox_var):
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+        try:
+            query = "UPDATE users SET hasBeenViewed = ? WHERE userId = ?"
+            db.execute(query, (checkbox_var.get(), userId))
+            connection.commit()
+        finally:
+            connection.close()
+
     # Creates the new user row, put in a method for reusing in search
     def add_user_row(self, user, rowcount):
         temp_frame = customtkinter.CTkFrame(self.patient_frame, height=50, corner_radius=0, fg_color="#333333")
         customtkinter.CTkLabel(temp_frame, text=user[2], font=self.mainFont, width=150).grid(column=0, row=0)
         customtkinter.CTkLabel(temp_frame, text=user[3], font=self.mainFont, width=150).grid(column=1, row=0)
-        customtkinter.CTkCheckBox(temp_frame, text="Viewed", font=self.mainFont, width=90).grid(column=2,row=0)
-        customtkinter.CTkButton(temp_frame, text="View as", command=lambda user=user[1] : self.main_screen.view_as(user), font=self.mainFont, width=150).grid(column=3, row=0)
+        checkbox_var = customtkinter.IntVar(value=user[5])
+        customtkinter.CTkCheckBox(temp_frame, text="Viewed", font=self.mainFont, width=90, command = lambda userId=user[1] : self.update_viewed_status(userId, checkbox_var)).grid(column=2,row=0)
+        customtkinter.CTkButton(temp_frame, text="View as", command=lambda userId=user[1] : self.main_screen.view_as(userId), font=self.mainFont, width=150).grid(column=3, row=0)
         temp_frame.grid(column=0,row=rowcount,sticky="ew", pady=5)
         temp_frame.grid_columnconfigure((0,1,2,3), weight=1)
 

@@ -40,6 +40,7 @@ class App(customtkinter.CTk):
         self.workcard_frame = Work_Card_Frame(self)
         self.culture_frame = Culture_Notes(self)
         self.show_login_screen()
+        self.users_button = None
         self.pending_user_id = None
 
     def create_signup_frame(self, isAdmin = 0):
@@ -186,8 +187,10 @@ class App(customtkinter.CTk):
             self.new_admin_button.grid(row=9, column=0, padx=20, pady=10, sticky="s")
 
         elif self.users_button:
+            print("USERS BUTTON EXIST")
             self.users_button.destroy()
             self.new_admin_button.destroy()
+        self.clear_frame()
 
         if user:
             self.current_user_id = user[0]

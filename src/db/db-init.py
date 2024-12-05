@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS Users (
     nmuIN INTEGER UNIQUE NOT NULL,
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
-    isAdmin INTEGER DEFAULT 0
+    isAdmin INTEGER DEFAULT 0,
+    hasBeenViewed INTEGER DEFAULT 0
 );
 ''')
 
