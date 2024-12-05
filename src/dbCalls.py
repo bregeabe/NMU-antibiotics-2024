@@ -118,8 +118,12 @@ def get_user_patient_id(self, patientId=None):
     connection.close()
     return user_patient_id
 
-def getAllUsers(db):
-    db.execute('SELECT * FROM Users')
+def getAllUsers(db,excludeAdmins = False):
+    if excludeAdmins == False:
+        db.execute('SELECT * FROM Users')
+    else:
+        db.execute('SELECT * FROM Users WHERE isAdmin = 0')
     users = db.fetchall()
+    print(users)
     connection.close()
     return users

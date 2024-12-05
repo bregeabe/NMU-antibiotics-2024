@@ -42,7 +42,7 @@ class App(customtkinter.CTk):
         self.show_login_screen()
         self.pending_user_id = None
 
-    def create_signup_frame(self):
+    def create_signup_frame(self, isAdmin = 0):
         self.signup_label = customtkinter.CTkLabel(self.signup_container, text="Sign Up", font=customtkinter.CTkFont(size=24, weight="bold"))
         self.signup_label.pack(pady=50)
 
@@ -52,13 +52,13 @@ class App(customtkinter.CTk):
         self.password_entry = customtkinter.CTkEntry(self.signup_container, placeholder_text="Last Name")
         self.password_entry.pack(pady=10)
 
-        self.signup_button = customtkinter.CTkButton(self.signup_container, text="Sign Up", command=self.signup)
+        self.signup_button = customtkinter.CTkButton(self.signup_container, text="Sign Up", command= lambda admin = isAdmin: self.signup(admin))
         self.signup_button.pack(pady=10)
 
         self.bt_to_login = customtkinter.CTkButton(self.signup_container, text="Back to Login", command=self.show_login_screen)
         self.bt_to_login.pack(pady=10)
 
-    def create_login_frame(self):
+    def create_login_frame(self, isAdmin = 0):
         self.login_container.pack(fill=tkinter.BOTH, expand=True, padx=10, pady=10)
 
         self.login_label = customtkinter.CTkLabel(self.login_container, text="Scan NMU ID", font=customtkinter.CTkFont(size=32, weight="bold"))
@@ -72,7 +72,7 @@ class App(customtkinter.CTk):
 
         self.nmuIN_entry.bind("<Return>", self.login)
 
-        self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command=self.login)
+        self.login_button = customtkinter.CTkButton(self.login_container, text="Login", command= lambda admin = isAdmin: self.login(admin))
         self.login_button.pack(pady=10)
 
         self.bt_Quit = customtkinter.CTkButton(self.login_container, text="Quit", fg_color= '#EA0000', hover_color = '#B20000', command=self.close_window)
@@ -86,31 +86,32 @@ class App(customtkinter.CTk):
 
         self.left_side_panel.grid_columnconfigure(0, weight=1)
         self.left_side_panel.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=0)
+        self.left_side_panel.grid_rowconfigure((7), weight=1)
+        self.left_side_panel.grid_rowconfigure((8,9,10,11), weight=0)
 
         self.logo_label = customtkinter.CTkLabel(self.left_side_panel, text="NMU Antibiotic Report \n", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(40, 10))
 
         self.bt_statement = customtkinter.CTkButton(self.left_side_panel, text="Create Patient", command=self.create)
-        self.bt_statement.grid(row=3, column=0, padx=20, pady=10)
+        self.bt_statement.grid(row=3, column=0, padx=20, pady=10, sticky="n")
 
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Specimen Requisition", command=self.requisition)
-        self.bt_categories.grid(row=4, column=0, padx=20, pady=10)
+        self.bt_categories.grid(row=4, column=0, padx=20, pady=10, sticky="n")
 
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Specimen Workcard", command=self.workcard)
-        self.bt_categories.grid(row=5, column=0, padx=20, pady=10)
+        self.bt_categories.grid(row=5, column=0, padx=20, pady=10, sticky="n")
 
         self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Simulated Biochems", command=self.biochems)
-        self.bt_categories.grid(row=6, column=0, padx=20, pady=10)
+        self.bt_categories.grid(row=6, column=0, padx=20, pady=10, sticky="n")
 
-        #if user is admin:
-        self.bt_categories = customtkinter.CTkButton(self.left_side_panel, text="Users", command=self.users)
-        self.bt_categories.grid(row=7, column=0, padx=20, pady=10)
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
 
         self.bt_Quit = customtkinter.CTkButton(self.left_side_panel, text="Change User", fg_color= '#EA0000', hover_color = '#B20000', command=self.show_login_screen)
-        self.bt_Quit.grid(row=9, column=0, padx=20, pady=10)
+        self.bt_Quit.grid(row=10, column=0, padx=20, pady=10, sticky="s")
 
         self.bt_Quit = customtkinter.CTkButton(self.left_side_panel, text="Quit", fg_color= '#EA0000', hover_color = '#B20000', command=self.close_window)
-        self.bt_Quit.grid(row=10, column=0, padx=20, pady=10)
+        self.bt_Quit.grid(row=11, column=0, padx=20, pady=(10, 75), sticky="s")
 
         self.right_side_panel = customtkinter.CTkFrame(self.main_container, corner_radius=10, fg_color="#000811")
         self.right_side_panel.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True, padx=5, pady=5)
@@ -140,7 +141,7 @@ class App(customtkinter.CTk):
         self.signup_container.pack(fill=tkinter.BOTH, expand=True)
         self.signup_label = customtkinter.CTkLabel(self.signup_container, text="", fg_color="transparent")
 
-    def signup(self):
+    def signup(self, isAdmin = 0):
         firstName = self.username_entry.get()
         lastName = self.password_entry.get()
         userId = self.pending_user_id
@@ -149,7 +150,7 @@ class App(customtkinter.CTk):
         db = connection.cursor()
 
         try:
-            db.execute('''INSERT INTO Users (nmuIN, firstName, lastName) VALUES (?, ?, ?)''', (userId, firstName, lastName))
+            db.execute('''INSERT INTO Users (nmuIN, firstName, lastName, isAdmin) VALUES (?, ?, ?, ?)''', (userId, firstName, lastName, isAdmin))
             connection.commit()
             db.execute("SELECT userId FROM Users WHERE nmuIN = ?", (userId,))
             new_user = db.fetchone()
@@ -164,13 +165,29 @@ class App(customtkinter.CTk):
         finally:
             connection.close()
 
-    def login(self, event=None):
+    def login(self, isAdmin = 0, event=None):
         nmuIN = int(self.nmuIN_entry.get())
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
 
         db.execute("SELECT userId FROM Users WHERE nmuIN = ?", (nmuIN,))
         user = db.fetchone()
+
+        db.execute("SELECT isAdmin FROM Users WHERE nmuIN = ?", (nmuIN,))
+        isAdmin = db.fetchone()
+
+        print("isAdmin: ", isAdmin)
+
+        if isAdmin and isAdmin[0] == 1:
+            self.users_button = customtkinter.CTkButton(self.left_side_panel, text="Users", command=self.users)
+            self.users_button.grid(row=8, column=0, padx=20, pady=10, sticky="s")
+
+            self.new_admin_button = customtkinter.CTkButton(self.left_side_panel, text="New Admin", command=self.new_admin)
+            self.new_admin_button.grid(row=9, column=0, padx=20, pady=10, sticky="s")
+
+        elif self.users_button:
+            self.users_button.destroy()
+            self.new_admin_button.destroy()
 
         if user:
             self.current_user_id = user[0]
@@ -281,6 +298,50 @@ class App(customtkinter.CTk):
     def open_grade(self, user_patient_id):
         grade_window = Grade_window(self, user_patient_id)
         grade_window.create()
+
+    def verify(self, event=None):
+        nmuIN = int(self.nmuIN_entry.get())
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+
+        db.execute("SELECT isAdmin FROM Users WHERE nmuIN = ?", (nmuIN,))
+        isAdmin = db.fetchone()
+
+        if not isAdmin or isAdmin[0] == 0:
+            self.nmuIN_entry.delete(0, tkinter.END)
+            self.new_admin_small_label.configure(text="You are not an admin! Please have an admin sign in first.")
+            print("NOT AN ADMIN")
+        else:
+            self.nmuIN_entry.delete(0, tkinter.END)
+            print("ADMIN")
+            #do signup but as admin
+            for widget in self.login_container.winfo_children():
+                widget.destroy()
+            self.create_login_frame(1)
+            for widget in self.signup_container.winfo_children():
+                widget.destroy()
+            self.create_signup_frame(1)
+            self.show_login_screen()
+
+    def new_admin(self):
+        self.clear_frame()
+
+        self.new_admin_main_label = customtkinter.CTkLabel(self.right_dashboard, text="Scan Current Admin NMU ID", font=customtkinter.CTkFont(size=32, weight="bold"))
+        self.new_admin_main_label.pack(pady=50)
+
+        self.new_admin_small_label = customtkinter.CTkLabel(self.right_dashboard, text="or enter the 14 digit code on the back", font=customtkinter.CTkFont(size=12, weight="normal"))
+        self.new_admin_small_label.pack(pady=10)
+
+        self.nmuIN_entry = customtkinter.CTkEntry(self.right_dashboard, placeholder_text="Click", show="*")
+        self.nmuIN_entry.pack(pady=10)
+
+        self.nmuIN_entry.bind("<Return>", self.verify)
+
+        self.login_button = customtkinter.CTkButton(self.right_dashboard, text="Verify", command=self.verify)
+        self.login_button.pack(pady=10)
+
+
+
 
 a = App()
 a.mainloop()

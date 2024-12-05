@@ -72,7 +72,7 @@ class Users_Frame:
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
 
-        users = dbCalls.getAllUsers(db)
+        users = dbCalls.getAllUsers(db, True)
 
         for rowcount, user in enumerate(users, 1):
             self.add_user_row(user, rowcount)
