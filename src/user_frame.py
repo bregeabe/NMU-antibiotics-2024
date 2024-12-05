@@ -55,10 +55,11 @@ class Users_Frame:
         self.place_labels_frame()
 
     def update_viewed_status(self, userId, checkbox_var):
+        print("Saving view checkbox...")
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
         try:
-            query = "UPDATE users SET hasBeenViewed = ? WHERE userId = ?"
+            query = "UPDATE users SET hasBeenViewed = ? WHERE nmuIn = ?"
             db.execute(query, (checkbox_var.get(), userId))
             connection.commit()
         finally:
@@ -70,7 +71,7 @@ class Users_Frame:
         customtkinter.CTkLabel(temp_frame, text=user[2], font=self.mainFont, width=150).grid(column=0, row=0)
         customtkinter.CTkLabel(temp_frame, text=user[3], font=self.mainFont, width=150).grid(column=1, row=0)
         checkbox_var = customtkinter.IntVar(value=user[5])
-        customtkinter.CTkCheckBox(temp_frame, text="Viewed", font=self.mainFont, width=90, command = lambda userId=user[1] : self.update_viewed_status(userId, checkbox_var)).grid(column=2,row=0)
+        customtkinter.CTkCheckBox(temp_frame, text="Viewed", font=self.mainFont, width=90, variable=checkbox_var, command = lambda userId=user[1] : self.update_viewed_status(userId, checkbox_var)).grid(column=2,row=0)
         customtkinter.CTkButton(temp_frame, text="View as", command=lambda userId=user[1] : self.main_screen.view_as(userId), font=self.mainFont, width=150).grid(column=3, row=0)
         temp_frame.grid(column=0,row=rowcount,sticky="ew", pady=5)
         temp_frame.grid_columnconfigure((0,1,2,3), weight=1)
