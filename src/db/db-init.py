@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS Users (
     userId INTEGER PRIMARY KEY AUTOINCREMENT,
     nmuIN INTEGER UNIQUE NOT NULL,
     firstName TEXT NOT NULL,
-    lastName TEXT NOT NULL
+    lastName TEXT NOT NULL,
+    isAdmin INTEGER DEFAULT 0,
+    hasBeenViewed INTEGER DEFAULT 0
 );
 ''')
 
@@ -39,6 +41,8 @@ CREATE TABLE IF NOT EXISTS UserPatients (
     userPatientId INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INT,
     patientId INT,
+    grade TEXT,
+    feedback TEXT, 
     FOREIGN KEY (userId) REFERENCES Users(userId),
     FOREIGN KEY (patientId) REFERENCES Patients(patientId)
 );
@@ -101,39 +105,46 @@ db.execute('''
 CREATE TABLE IF NOT EXISTS CultureNotes (
     noteId INTEGER PRIMARY KEY AUTOINCREMENT,
     userPatientId INTEGER NOT NULL UNIQUE,
-    cultureWorkup TEXT,
+    isolateNumber TEXT,
     colonyDescription TEXT,
-    biochemicalReactions TEXT,
+    additionalNotes TEXT,
+           
     test1Name TEXT,
-    test1Inoculation TEXT,
-    test1Temperature INT,
-    test1Duration TEXT,
-    test1AtmosphericConditions TEXT,
+    test1SetUpDate TEXT,
+    test1SetUpTime INT,
+    test1Results TEXT,
+           
     test2Name TEXT,
-    test2Inoculation TEXT,
-    test2Temperature INT,
-    test2Duration TEXT,
-    test2AtmosphericConditions TEXT,
+    test2SetUpDate TEXT,
+    test2SetUpTime TEXT,
+    test2Results TEXT,
+           
     test3Name TEXT,
-    test3Inoculation TEXT,
-    test3Temperature INT,
-    test3Duration TEXT,
-    test3AtmosphericConditions TEXT,
+    test3SetUpDate TEXT,
+    test3SetUpTime TEXT,
+    test3Results TEXT,
+           
     test4Name TEXT,
     test4Inoculation TEXT,
     test4Temperature INT,
     test4Duration TEXT,
     test4AtmosphericConditions TEXT,
+    test4Results TEXT,
+           
     test5Name TEXT,
     test5Inoculation TEXT,
     test5Temperature INT,
     test5Duration TEXT,
     test5AtmosphericConditions TEXT,
+    test5Results TEXT,
+           
     test6Name TEXT,
     test6Inoculation TEXT,
     test6Temperature INT,
     test6Duration TEXT,
     test6AtmosphericConditions TEXT,
+    test6Results TEXT,
+           
     FOREIGN KEY (userPatientId) REFERENCES UserPatients(userPatientId)
 );
 ''')

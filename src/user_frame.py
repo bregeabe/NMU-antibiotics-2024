@@ -2,11 +2,11 @@ import customtkinter
 import sqlite3
 import dbCalls
 
-class PatientCreateFrame:
+class Users_Frame:
     def __init__(self, main_screen):
         self.main_screen = main_screen
-        self.right_dashboard = self.main_screen.right_dashboard
-        self.patientFont = customtkinter.CTkFont(size=16)
+        self.right_dashboard = main_screen.right_dashboard
+        self.mainFont = customtkinter.CTkFont(size=16)
 
     def build_search_frame(self):
         self.search_frame = customtkinter.CTkFrame(self.create_patient_frame, corner_radius=0, height=50, fg_color="#232323")
@@ -18,11 +18,10 @@ class PatientCreateFrame:
     def build_labels_frame(self):
         aFont = customtkinter.CTkFont(size=18)
         self.labels_frame = customtkinter.CTkFrame(self.patient_frame, height=50, corner_radius=0, fg_color="#333333")
-        self.name_label = customtkinter.CTkLabel(self.labels_frame, text="Name", font=aFont, width=200)
-        self.dob_label = customtkinter.CTkLabel(self.labels_frame, text="DOB", font=aFont, width=160)
-        self.sex_label = customtkinter.CTkLabel(self.labels_frame, text="Sex", font=aFont, width=150)
-        self.mrn_label = customtkinter.CTkLabel(self.labels_frame, text="MRN", font=aFont, width=160)
-        self.create_label = customtkinter.CTkLabel(self.labels_frame, text="Create Patient", font=aFont, width=150)
+        self.first_name_label = customtkinter.CTkLabel(self.labels_frame, text="First name", font=aFont, width=150)
+        self.last_name_label = customtkinter.CTkLabel(self.labels_frame, text="Last name", font=aFont, width=150)
+        self.viewed_label = customtkinter.CTkLabel(self.labels_frame, text="Viewed", font=aFont, width=90)
+        self.create_label = customtkinter.CTkLabel(self.labels_frame, text="View as user", font=aFont, width=150)
 
     def place_search_frame(self):
         self.search_frame.grid(column=0, row=0, sticky="ew", padx=15)
@@ -32,17 +31,16 @@ class PatientCreateFrame:
 
     def place_labels_frame(self):
         self.labels_frame.grid(row=0, column=0, sticky="ew")
-        self.name_label.grid(row=0,column=0)
-        self.dob_label.grid(row=0,column=1)
-        self.sex_label.grid(row=0,column=2)
-        self.mrn_label.grid(row=0,column=3)
-        self.create_label.grid(row=0,column=4)
+        self.first_name_label.grid(row=0,column=0)
+        self.last_name_label.grid(row=0,column=1)
+        self.viewed_label.grid(row=0,column=2)
+        self.create_label.grid(row=0,column=3)
 
-        self.labels_frame.grid_columnconfigure((0,1,2,3,4), weight=1)
+        self.labels_frame.grid_columnconfigure((0,1,2,3), weight=1)
         self.labels_frame.grid_rowconfigure((0), weight=1)
 
     def build_frames(self):
-        self.lookup_label = customtkinter.CTkLabel(self.right_dashboard, text="Patients", font=customtkinter.CTkFont(size=30, weight="bold"))
+        self.lookup_label = customtkinter.CTkLabel(self.right_dashboard, text="Users", font=customtkinter.CTkFont(size=30, weight="bold"))
         self.create_patient_frame = customtkinter.CTkFrame(self.right_dashboard, corner_radius=10, fg_color="#232323")
         self.build_search_frame()
         self.patient_frame = customtkinter.CTkScrollableFrame(self.create_patient_frame, corner_radius=10, fg_color="#333333")
@@ -56,23 +54,27 @@ class PatientCreateFrame:
         self.place_search_frame()
         self.place_labels_frame()
 
-    def on_create_specimen_req(self, patient_id):
-        patient_data = dbCalls.get_patient_data(patient_id)
-        if patient_data:
-            self.main_screen.open_specimen_req(patient_data, patient_id)
-        else:
-            print(f"Error: No data found for patient_id: {patient_id}")
+    def update_viewed_status(self, userId, checkbox_var):
+        print("Saving view checkbox...")
+        connection = sqlite3.connect('antibiotics.db')
+        db = connection.cursor()
+        try:
+            query = "UPDATE users SET hasBeenViewed = ? WHERE nmuIn = ?"
+            db.execute(query, (checkbox_var.get(), userId))
+            connection.commit()
+        finally:
+            connection.close()
 
-    # Creates the new patient row, put in a method for reusing in search
-    def add_patient_row(self, patient, rowcount):
+    # Creates the new user row, put in a method for reusing in search
+    def add_user_row(self, user, rowcount):
         temp_frame = customtkinter.CTkFrame(self.patient_frame, height=50, corner_radius=0, fg_color="#333333")
-        customtkinter.CTkLabel(temp_frame, text=patient[2], font=self.patientFont, width=200).grid(column=0, row=0)
-        customtkinter.CTkLabel(temp_frame, text=patient[3], font=self.patientFont, width=150).grid(column=1, row=0)
-        customtkinter.CTkLabel(temp_frame, text=patient[4], font=self.patientFont, width=150).grid(column=2, row=0)
-        customtkinter.CTkLabel(temp_frame, text=patient[1], font=self.patientFont, width=150).grid(column=3, row=0)
-        customtkinter.CTkButton(temp_frame, text="Create", command=lambda p_id=patient[0]: self.on_create_specimen_req(p_id), font=self.patientFont, width=150).grid(column=4, row=0)
+        customtkinter.CTkLabel(temp_frame, text=user[2], font=self.mainFont, width=150).grid(column=0, row=0)
+        customtkinter.CTkLabel(temp_frame, text=user[3], font=self.mainFont, width=150).grid(column=1, row=0)
+        checkbox_var = customtkinter.IntVar(value=user[5])
+        customtkinter.CTkCheckBox(temp_frame, text="Viewed", font=self.mainFont, width=90, variable=checkbox_var, command = lambda userId=user[1] : self.update_viewed_status(userId, checkbox_var)).grid(column=2,row=0)
+        customtkinter.CTkButton(temp_frame, text="View as", command=lambda userId=user[1] : self.main_screen.view_as(userId), font=self.mainFont, width=150).grid(column=3, row=0)
         temp_frame.grid(column=0,row=rowcount,sticky="ew", pady=5)
-        temp_frame.grid_columnconfigure((0,1,2,3,4), weight=1)
+        temp_frame.grid_columnconfigure((0,1,2,3), weight=1)
 
     def build(self):
         self.main_screen.clear_frame()
@@ -82,10 +84,10 @@ class PatientCreateFrame:
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
 
-        patients = dbCalls.getAllPatients(db)
+        users = dbCalls.getAllUsers(db, True)
 
-        for rowcount, patient in enumerate(patients, 1):
-            self.add_patient_row(patient, rowcount)
+        for rowcount, user in enumerate(users, 1):
+            self.add_user_row(user, rowcount)
         connection.close()
         self.patient_frame.grid_rowconfigure((0,1,2), weight=0, minsize=50 )
         self.patient_frame.grid_columnconfigure((0), weight=1, uniform="column")
@@ -105,16 +107,16 @@ class PatientCreateFrame:
         #Search for their entry in the db
         connection = sqlite3.connect('antibiotics.db')
         db = connection.cursor()
-        query = "SELECT * FROM patients WHERE name LIKE ? OR mrn LIKE ? OR dob LIKE ?"
-        patients = db.execute(query, (f"%{entry}%", f"%{entry}%", f"%{entry}%")).fetchall()
+        query = "SELECT * FROM users WHERE name LIKE ? OR mrn LIKE ? OR dob LIKE ?"
+        users = db.execute(query, (f"%{entry}%", f"%{entry}%", f"%{entry}%")).fetchall()
         connection.close()
 
         #if anything was found, show that information. Otherwise, say nothing was found
-        if patients:
-            for rowcount, patient in enumerate(patients, 1):
-                self.add_patient_row(patient, rowcount)
+        if users:
+            for rowcount, user in enumerate(users, 1):
+                self.add_user_row(user, rowcount)
         else:
-            customtkinter.CTkLabel(self.patient_frame, text="No results found", font=self.patientFont).grid(column=0, row=2, pady=10)
+            customtkinter.CTkLabel(self.patient_frame, text="No results found", font=self.mainFont).grid(column=0, row=2, pady=10)
 
         #make sure the frame looks correct and you cannot scroll pass where patients are.
         self.patient_frame.grid_rowconfigure((0, 1, 2), weight=0, minsize=50)
