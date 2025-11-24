@@ -1,7 +1,4 @@
 # Antibiotics System - Northern Michigan University
-
-# Antibiotic report
-
 ## Overview
 The clinical sciences department creates antibiotic reports based on micro-organisms to find MIC's for patient treatment. Right now, they do this process by pen and paper. While it gets the job done, it has proven to be ineffective and an inaccurate representation of the industry. 
 
@@ -52,9 +49,9 @@ This results in a professional way for students to document patient and specimen
         - atmosphericConditions
         
 ## Entity relation diagrams
-![diagram](../assets/antibiotic-report-diagram.png)
+![diagram](./assets/antibiotic-report-diagram.png)
 
-![diagram](../assets/EntityRelation.png)
+![diagram](./assets/EntityRelation.png)
 
 ## Queries
 
